@@ -1,5 +1,4 @@
 import userModel from "../model/userModel.js";
-import bcrypt from 'bcrypt'
 
 export default class UserStore {
 
