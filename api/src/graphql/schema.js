@@ -13,6 +13,11 @@ const typeDefs = gql`
     lastName: String
 	  password:String
   }
+  type message{
+    message:String
+    token:String
+  }
+
   type Organization {
     name: String!
     ownerName: String
@@ -37,7 +42,7 @@ const typeDefs = gql`
   }
   type Mutation {
     # USER
-	  userLogin(email: String!, password: String!): User
+	  userLogin(email: String!, password: String!): message
     createUser(params: UserInput): User
 
     #ORGANISATION

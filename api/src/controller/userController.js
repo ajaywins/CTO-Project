@@ -54,8 +54,8 @@ export default class UserController {
                             { userID: user._id },
                             process.env.SECRET_KEY,
                             { expiresIn: "5m" });
-                        (res, { msg: "Login Sucessfull", token: token })
-                        return user;
+                        let response = { message: "Login Sucessfull", token: token }
+                        return response;
 
                     }
                     else {
