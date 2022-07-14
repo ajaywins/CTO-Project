@@ -7,7 +7,8 @@ export default class UserStore {
         try {
             user = await userModel(User).save();
         } catch (e) {
-            console.log(e);
+            console.error(e);
+            return Promise.reject(new UserStore.OPERATION_UNSUCCESSFUL());
         }
         return user;
     }
@@ -15,11 +16,11 @@ export default class UserStore {
         let user;
         try {
             user = await userModel.findOne({email})
-            console.log('user',user);
             return user;
         }
         catch (e) {
-            console.log(e);
+            console.error(e);
+            return Promise.reject(new UserStore.OPERATION_UNSUCCESSFUL());
         }
     }
 }

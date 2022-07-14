@@ -13,7 +13,7 @@ const typeDefs = gql`
     lastName: String
 	  password:String
   }
-  type message{
+  type Message{
     message:String
     token:String
   }
@@ -39,10 +39,11 @@ const typeDefs = gql`
   type Query {
     #User
     getUser(id: String): User
+    # getOrg(id: String): Organization
   }
   type Mutation {
     # USER
-	  userLogin(email: String!, password: String!): message
+	  userLogin(email: String!, password: String!): Message
     createUser(params: UserInput): User
 
     #ORGANISATION
@@ -50,8 +51,6 @@ const typeDefs = gql`
   }
 `;
 const resolvers = merge(userResolvers, OrgRsolvers);
-
-
 
 export const executableSchema = makeExecutableSchema({
   resolvers: {

@@ -27,13 +27,13 @@ export const userResolvers = {
                 email,
                 password
             };
-
             let response;
             try {
                 response = await userController.userLogin(request);
                 console.log('respomse', response);
             } catch (e) {
                 console.log(e)
+                
             }
             return response;
         },

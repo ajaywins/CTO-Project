@@ -2,6 +2,15 @@ import Joi from "joi";
 import UserStore from "../store/userStore.js";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import StatusCodes from '../utils/statusCodes.js';
+import {
+    validationError,
+    internalServerError,
+    badRequestError,
+    forbiddenError,
+    notFoundError,
+    pageExpiredError,
+} from '../utils/errorUtil';
 
 
 const userStore = new UserStore();
@@ -10,9 +19,9 @@ const userStore = new UserStore();
 export default class UserController {
     async createUser(req, res) {
         const schema = Joi.object().keys({
-            firstName: Joi.string().optional(),
-            lastName: Joi.string().optional(),
-            email: Joi.string().email().optional(),
+            firstName: Joi.string().required(),
+            lastName: Joi.string().required(),
+            email: Joi.string().email().required(),
             password: Joi.string().required()
         });
         const params = schema.validate(req, { abortEarly: false });
@@ -38,6 +47,7 @@ export default class UserController {
             return user;
         } catch (e) {
             console.log(e);
+            return internalServerError(e);
         }
     }
     async userLogin(req, res) {
@@ -54,29 +64,42 @@ export default class UserController {
                             { userID: user._id },
                             process.env.SECRET_KEY,
                             { expiresIn: "5m" });
-                        let response = { message: "Login Sucessfull", token: token }
+                        let response = {
+                            message: "login sucessfull",
+                            token: token,
+                            status: StatusCodes.OK
+                        }
                         return response;
 
                     }
                     else {
-                        res.send({
-                            status: "failed",
-                            message: " Email or password not valid",
-
-                        });
+                        let response = {
+                            message: "invalid credetial",
+                            status: StatusCodes.UNKNOWN_CODE
+                        }
+                        return response;
                     }
                 } else {
-                    res.send({
-                        status: "failed",
-                        message: "you are Not Registered User",
-                    });
+                    let response = {
+                        message: "user not found",
+                        status: StatusCodes.NOT_FOUND
+                    }
+                    return response;
                 }
             } else {
-                res.status(400)({ status: "failed", message: "All fields are required" });
+                let response = {
+                    message: "credential not matched",
+                    status: StatusCodes.NOT_FOUND
+                }
+                return response;
             }
         } catch (e) {
             console.log(e);
-            res.status(400)({ status: "failed", mesaage: "unable to login" });
+            let response = {
+                message: "login failed",
+                status: StatusCodes.UNAUTHORIZED
+            }
+            return response;
         }
     };
 }

@@ -7,9 +7,9 @@ const orgStore = new OrgStore();
 export default class OrgController {
     async createOrg(req, res) {
         const schema = Joi.object().keys({
-            name: Joi.string().optional(),
-            ownerName: Joi.string().optional(),
-            email: Joi.string().optional(),
+            name: Joi.string().required(),
+            ownerName: Joi.string().required(),
+            email: Joi.string().required(),
         });
         const params = schema.validate(req, { abortEarly: false });
 
