@@ -1,7 +1,7 @@
 import StatusCodes from './statusCodes.js';
 
-const _errorLog = function(err){
-  if(process.env.DEBUG) console.error(err.toString());
+const _errorLog = function (err) {
+  if (process.env.DEBUG) console.error(err.toString());
 }
 export const badRequestError = function (err, response) {
   if (typeof err === 'string') {
@@ -28,7 +28,6 @@ export const forbiddenError = function (err, response) {
 
   return response;
 };
-
 export const internalServerError = function (err = "Error Occured", response) {
   _errorLog(err);
 

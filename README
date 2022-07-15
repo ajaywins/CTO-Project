@@ -1,17 +1,51 @@
-Clone the repo and install the dependencies. Step: 1-
+### Getting Started:-
+- You must have NPM and Node installed to run the app.
+- To install everything in every package run the command `npm install` from your terminal in the root directory.
+- Then, you can run the platform for development purposes by running `npm run start` in the same directory.
 
-"npm install"
 
-To start the express server:- Use command :-
+### General Tech Stack/Tools List:-
 
-"npm run start"
+  - Nodejs
+  - JavaSript
+  - Mongoose
+  - Express
 
-After the Server start open the postman and Hit with postman url
+- Other
+  - Github
+  - Git
+  - NPM
+  - Open source libraries
+
+
+### Postman collection:-
+
+##For creating User:-
 
   mutation createUser($params: UserInput){
 createUser(params:$params){
     email
 	    firstName
 	    lastName
+      email
     }
+}
+
+##For Login User:-
+
+mutation userLogin($email: String!, $password: String!){
+    userLogin(email: $email, password: $password){
+       message,
+       token
+    }
+}
+
+##For Creating Organisation:-
+
+mutation createOrg($params: OrganizationInput){
+        createOrg(params:$params){
+            email,
+            name,
+            ownerName
+      }
 }
