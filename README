@@ -1,5 +1,5 @@
 ### Getting Started:-
-- You must have NPM and Node installed to run the app.
+- You must have NPM (8.11.0) and Node (v16.16.0) installed to run the app.
 - To install everything in every package run the command `npm install` from your terminal in the root directory.
 - Then, you can run the platform for development purposes by running `npm run start` in the same directory.
 
