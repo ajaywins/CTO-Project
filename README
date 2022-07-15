@@ -7,7 +7,7 @@
 $ npm install
 $ Running the app
 
-# development
+# Running the app
 $ npm run start
 
 # Postman collection URL:-
