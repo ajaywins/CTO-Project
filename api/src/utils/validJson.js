@@ -6,5 +6,4 @@ const IsJsonString = (str) => {
     }
     return true;
 }
-
 export default IsJsonString

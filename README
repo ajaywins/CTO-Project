@@ -1,51 +1,15 @@
-### Getting Started:-
+### Description
+- Express framework JavaScript starter repository.
 - You must have NPM and Node installed to run the app.
-- To install everything in every package run the command `npm install` from your terminal in the root directory.
-- Then, you can run the platform for development purposes by running `npm run start` in the same directory.
 
 
-### General Tech Stack/Tools List:-
+### Installation
+$ npm install
+$ Running the app
 
-  - Nodejs
-  - JavaSript
-  - Mongoose
-  - Express
+# development
+$ npm run start
 
-- Other
-  - Github
-  - Git
-  - NPM
-  - Open source libraries
+###Postman collection URL:-
 
-
-### Postman collection:-
-
-##For creating User:-
-
-  mutation createUser($params: UserInput){
-createUser(params:$params){
-    email
-	    firstName
-	    lastName
-      email
-    }
-}
-
-##For Login User:-
-
-mutation userLogin($email: String!, $password: String!){
-    userLogin(email: $email, password: $password){
-       message,
-       token
-    }
-}
-
-##For Creating Organisation:-
-
-mutation createOrg($params: OrganizationInput){
-        createOrg(params:$params){
-            email,
-            name,
-            ownerName
-      }
-}
+https://www.getpostman.com/collections/11a91768014add02c5ce

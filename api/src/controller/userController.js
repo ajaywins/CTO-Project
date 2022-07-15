@@ -30,7 +30,6 @@ export default class UserController {
             password
         } = params.value;
 
-
         const hashPassword = await bcrypt.hash(password, 10);
 
         const attribute = {
@@ -67,7 +66,6 @@ export default class UserController {
                             status: StatusCodes.OK
                         }
                         return response;
-
                     }
                     else {
                         let response = {
