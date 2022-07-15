@@ -1,4 +1,6 @@
 import OrgController from "../../controller/organisationController.js";
+import StatusCodes from "../../utils/statusCodes.js";
+import { ApolloError } from "apollo-server-express";
 
 const orgController = new OrgController();
 
@@ -11,7 +13,6 @@ export const OrgRsolvers = {
         //         } catch (e) {
         //             console.log(e);
         //         }
-
         //         return response.user;
         //     },
     },
@@ -30,15 +31,30 @@ export const OrgRsolvers = {
                 name,
             };
             let response;
-
             try {
                 response = await orgController.createOrg(request);
+                help.checkStatus(response);
             } catch (e) {
                 console.log(e);
+                help.catchThrow(e);
             }
-            console.log("resolver", response);
-            return response;
+            return response
         },
     },
+};
+const help = {
+    checkStatus: (response) => {
+        if (response.status === StatusCodes.OK) return;
 
+        if (response.status !== StatusCodes.NOT_FOUND) return;
+
+        throw new ApolloError(
+            response.error.message,
+            response.status.toString(),
+        );
+    },
+    catchThrow: (err) => {
+        console.log(err);
+        throw err;
+    },
 };

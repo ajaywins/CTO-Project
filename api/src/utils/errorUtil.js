@@ -1,5 +1,6 @@
-import StatusCodes from './statusCodes';
-import IsJsonString from './validJson';
+import StatusCodes from './statusCodes.js';
+
+
 const _errorLog = function (err) {
   if (process.env.DEBUG) console.error(err.toString());
 };
@@ -57,9 +58,9 @@ export const validationError = function (err, response) {
   _errorLog(err);
 
   if (response === void 0) response = {};
-    response.status = StatusCodes.UNPROCESSABLE_ENTITY;
-    response.error = err.details[0].message;
-    response.errors = err.details;
+  response.status = StatusCodes.UNPROCESSABLE_ENTITY;
+  response.error = err.details[0].message;
+  response.errors = err.details;
 
-    return response;
+  return response;
 };

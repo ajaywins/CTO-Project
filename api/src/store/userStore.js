@@ -15,12 +15,18 @@ export default class UserStore {
     async loginUser(email) {
         let user;
         try {
-            user = await userModel.findOne({email})
-            return user;
+            user = await userModel.findOne({ email })
         }
         catch (e) {
             console.error(e);
             return Promise.reject(new UserStore.OPERATION_UNSUCCESSFUL());
         }
+        return user;
     }
-}
+};
+
+UserStore.OPERATION_UNSUCCESSFUL = class extends Error {
+    constructor() {
+        super('An error occured while processing the request.');
+    }
+};

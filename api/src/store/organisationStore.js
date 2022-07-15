@@ -8,9 +8,14 @@ export default class OrgStore {
             org = await orgModel(Org).save();
         } catch (e) {
             console.log(e);
+            return Promise.reject(new UserStore.OPERATION_UNSUCCESSFUL());
         }
-        console.log("strore",org);
         return org;
     }
 
-}
+};
+OrgStore.OPERATION_UNSUCCESSFUL = class extends Error {
+    constructor() {
+        super('An error occured while processing the request.');
+    }
+};

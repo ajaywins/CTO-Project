@@ -1,8 +1,11 @@
 import UserController from "../../controller/userController.js";
+import { ApolloError, AuthenticationError } from 'apollo-server-express';
+import StatusCodes from '../../utils/statusCodes.js';
 
 const userController = new UserController();
 
 export const userResolvers = {
+
     Query: {
         //     getUser: async (parent, args, context) => {
         //         try {
@@ -30,10 +33,11 @@ export const userResolvers = {
             let response;
             try {
                 response = await userController.userLogin(request);
-                console.log('respomse', response);
+                help.checkStatus(response);
             } catch (e) {
                 console.log(e)
-                
+                help.catchThrow(e);
+
             }
             return response;
         },
@@ -55,11 +59,29 @@ export const userResolvers = {
 
             try {
                 response = await userController.createUser(request);
+                help.checkStatus(response);
             } catch (e) {
                 console.log(e);
+                help.catchThrow(e);
             }
-            return response;
+            return response
         },
     },
-
 };
+
+const help = {
+    checkStatus: (response) => {
+      if (response.status === StatusCodes.OK) return;
+  
+      if (response.status !== StatusCodes.NOT_FOUND) return;
+  
+      throw new ApolloError(
+        response.error.message,
+        response.status.toString(),
+      );
+    },
+    catchThrow: (err) => {
+      console.log(err);
+      throw err;
+    },
+  };

@@ -3,20 +3,28 @@ import UserStore from "../store/userStore.js";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import StatusCodes from '../utils/statusCodes.js';
-import {
-    validationError,
-    internalServerError,
-    badRequestError,
-    forbiddenError,
-    notFoundError,
-    pageExpiredError,
-} from '../utils/errorUtil';
+// import {
+//     validationError,
+//     internalServerError,
+//     badRequestError,
+//     forbiddenError,
+//     notFoundError,
+//     pageExpiredError,
+// } from '../utils/errorUtil';
 
 
 const userStore = new UserStore();
 
 
+
+
 export default class UserController {
+
+    static OPERATION_UNSUCCESSFUL = class extends Error {
+        constructor() {
+            super('An error occured while processing the request.');
+        }
+    };
     async createUser(req, res) {
         const schema = Joi.object().keys({
             firstName: Joi.string().required(),
@@ -47,7 +55,7 @@ export default class UserController {
             return user;
         } catch (e) {
             console.log(e);
-            return internalServerError(e);
+            return Promise.reject(new userStore.OPERATION_UNSUCCESSFUL());
         }
     }
     async userLogin(req, res) {
