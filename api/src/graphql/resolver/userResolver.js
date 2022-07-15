@@ -71,17 +71,17 @@ export const userResolvers = {
 
 const help = {
     checkStatus: (response) => {
-      if (response.status === StatusCodes.OK) return;
-  
-      if (response.status !== StatusCodes.NOT_FOUND) return;
-  
-      throw new ApolloError(
-        response.error.message,
-        response.status.toString(),
-      );
+        if (response.status === StatusCodes.OK) return;
+
+        if (response.status !== StatusCodes.NOT_FOUND) return;
+
+        throw new ApolloError(
+            response.error.message,
+            response.status.toString(),
+        );
     },
     catchThrow: (err) => {
-      console.log(err);
-      throw err;
+        console.log(err);
+        throw err;
     },
-  };
+};

@@ -3,19 +3,8 @@ import UserStore from "../store/userStore.js";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import StatusCodes from '../utils/statusCodes.js';
-// import {
-//     validationError,
-//     internalServerError,
-//     badRequestError,
-//     forbiddenError,
-//     notFoundError,
-//     pageExpiredError,
-// } from '../utils/errorUtil';
-
 
 const userStore = new UserStore();
-
-
 
 
 export default class UserController {

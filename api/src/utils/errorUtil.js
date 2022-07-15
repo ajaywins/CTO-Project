@@ -1,10 +1,8 @@
 import StatusCodes from './statusCodes.js';
 
-
-const _errorLog = function (err) {
-  if (process.env.DEBUG) console.error(err.toString());
-};
-
+const _errorLog = function(err){
+  if(process.env.DEBUG) console.error(err.toString());
+}
 export const badRequestError = function (err, response) {
   if (typeof err === 'string') {
     err = new Error(err);
