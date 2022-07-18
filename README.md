@@ -1,8 +1,5 @@
  ## Check This Out ##
-## The Word of Mouth Marketing Accelerator ##
-
 Check This Out enables businesses to accelerate and amplify their word of mouth marketing and business growth through text-based, incentive-driven, and highly trackable business tools.
-
 &nbsp;
 
 &nbsp;
