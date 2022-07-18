@@ -2,7 +2,6 @@
 
 - Express framework JavaScript starter repository.
 - You must have NPM and Node installed to run the app.
-```
 
 ## Installation
 
