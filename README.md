@@ -9,9 +9,9 @@ Check This Out enables businesses to accelerate and amplify their word of mouth 
 ***
 &nbsp;
 ## Installation
-You must have NPM and Node installed to run the app.
-$ npm install
-`npm run start`
+- You must have NPM and Node installed to run the app.
+- To install everything in every package run the command `npm install` from your terminal in the root directory.
+- Then, you can run the platform for development purposes by running `npm run start` in the same directory.
 
 &nbsp;
 ### General Tech Stack/Tools List: ###
