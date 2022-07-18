@@ -12,6 +12,8 @@ const typeDefs = gql`
     firstName: String
     lastName: String
 	  password:String
+    phoneNumber:String
+
   }
   type Message{
     message:String
@@ -23,12 +25,26 @@ const typeDefs = gql`
     ownerName: String
     email: String
   }
+
+  type Role {
+		_id: String!
+		acceptedAt: Int!
+		userId: String
+		phoneNumber: String
+		phoneCode: String
+		organizationId: String!
+		user: User
+		organization: Organization
+		accessLevel: String!
+	}
+  
   input UserInput {
  
     email: String
     firstName: String
     lastName: String
     password:String
+    phoneNumber:String
   }
  
   input OrganizationInput {
@@ -40,6 +56,11 @@ const typeDefs = gql`
     #User
     getUser(id: String): User
     # getOrg(id: String): Organization
+
+    # ROLE
+		# getOrganizationRoles: [Role]
+		# getUserRoles: [Role]
+
   }
   type Mutation {
     # USER

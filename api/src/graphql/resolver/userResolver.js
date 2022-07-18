@@ -46,14 +46,17 @@ export const userResolvers = {
                 email,
                 firstName,
                 lastName,
-                password
-            } = args.params;
+                password,
+                phoneNumber
 
+            } = args.params;
             const request = {
                 firstName,
                 lastName,
                 email,
-                password
+                password,
+                phoneNumber
+
             };
             let response;
 

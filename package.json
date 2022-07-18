@@ -12,7 +12,9 @@
     "joi": "^17.6.0",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.21",
-    "mongoose": "^6.4.4"
+    "moment-timezone": "^0.5.34",
+    "mongoose": "^6.4.4",
+    "shortid": "^2.2.16"
   },
   "name": "cto",
   "version": "1.0.0",

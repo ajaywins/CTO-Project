@@ -20,6 +20,10 @@ const userSchema = new schema({
     password:{
         type: String,
       required: false,
+    },
+    phoneNumber:{
+      type:String,
+      required:false
     }
 })
 const userModel = mongoose.model('user', userSchema);
