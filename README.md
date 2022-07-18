@@ -39,17 +39,5 @@ $ npm run start:dev
 
 https://www.getpostman.com/collections/11a91768014add02c5ce
 
-```
-
-## Support
-
-
-```
-
-## License
-
-
-```
-
 
 
