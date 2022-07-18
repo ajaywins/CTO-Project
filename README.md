@@ -35,7 +35,7 @@ $ npm run start:dev
 
 
 
-## Postman collection URL:-
+## Postman collection URL
 
 https://www.getpostman.com/collections/11a91768014add02c5ce
 
