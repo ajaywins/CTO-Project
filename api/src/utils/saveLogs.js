@@ -19,6 +19,5 @@ const saveLogs = async (location = "", info = {}, organizationId = "") => {
     } catch (e) {
         console.error(e);
     }
-    console.log("log",log);
 }
 export default saveLogs;

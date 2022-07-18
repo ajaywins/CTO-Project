@@ -8,17 +8,30 @@ import {
     internalServerError,
     badRequestError,
 } from '../utils/errorUtil.js';
-
-const userStore = new UserStore();
+import * as Time from '../utils/Times.js'
 
 
 export default class UserController {
+    constructor(controller) {
+        this.controller = controller;
+        this.storage = new UserStore();
+    }
 
     static OPERATION_UNSUCCESSFUL = class extends Error {
         constructor() {
             super('An error occured while processing the request.');
         }
     };
+
+    generateJWT(userId, organizationId) {
+        return jwt.sign({
+            _id: userId,
+            organizationId,
+        },
+            process.env.JWT_SECRET,
+        );
+    }
+
     async createUser(req, res) {
         let response = {
             status: StatusCodes.UNKNOWN_CODE,
@@ -26,7 +39,7 @@ export default class UserController {
         const schema = Joi.object().keys({
             firstName: Joi.string().required(),
             lastName: Joi.string().required(),
-            email: Joi.string().email().required(),
+            email: Joi.string().required(),
             password: Joi.string().required(),
             phoneNumber: Joi.string().required(),
         });
@@ -51,25 +64,18 @@ export default class UserController {
 
         };
 
-        // try {
-        //     let user = await userStore.createUser(attribute);
-        //     return user;
-        // } catch (e) {
-        //     console.log(e);
-        //     return Promise.reject(new userStore.OPERATION_UNSUCCESSFUL());
-        // }
         // lowercase email
         let formattedEmail;
         let existingUser;
         if (email) {
             formattedEmail = email.toLowerCase();
-
             /**
              * Make sure that there isn't an existing account
              * associated with this email address
              */
             try {
                 existingUser = await this.storage.findUserByEmail(email);
+                console.log("log",existingUser);
             } catch (e) {
                 await saveLogs("UserController::register", e)
                 return internalServerError(e, response);
@@ -81,24 +87,6 @@ export default class UserController {
                 return badRequestError(errorMsg, response);
             }
         }
-
-        /**
-         * Make sure that there isn't an existing account
-         * associated with this phone number
-         */
-
-        // try {
-        //     existingUser = await this.storage.findUserByPhoneNumber(formattedPhoneNumber);
-        // } catch (e) {
-        //     await saveLogs("UserController::register", e)
-        //     return internalServerError(e, response);
-        // }
-        /**
-         if an existing user has no roles, they are probably coming from user app
-        and just want to create an admin account
-        their phone number is already in the database so usually it would error
-        but we have to special case it
-        */
         let isAlreadyStandardUser = false;
         if (existingUser) {
             try {
@@ -143,7 +131,7 @@ export default class UserController {
                 password,
                 firstName,
                 lastName,
-                phoneNumber: formattedPhoneNumber,
+                phoneNumber,
                 createdAt: Time.now(),
             };
 
@@ -172,13 +160,12 @@ export default class UserController {
                 return internalServerError(e, response);
             }
         }
-
         response = {
             status: StatusCodes.OK,
             user,
-            // token: this.generateJWT(user._id),
+            token: this.generateJWT(user._id),
         };
-
+        console.log("res", token);
         return response;
 
     }
@@ -187,7 +174,7 @@ export default class UserController {
             const { email, password } = req;
 
             if (email && password) {
-                const user = await userStore.loginUser(email);
+                const user = await this.storage.loginUser(email);
                 if (user != null) {
                     const isMatch = await bcrypt.compare(password, user.password);
                     if (user.email === email && isMatch) {

@@ -37,7 +37,7 @@ const typeDefs = gql`
 		organization: Organization
 		accessLevel: String!
 	}
-  
+
   input UserInput {
  
     email: String
@@ -59,7 +59,7 @@ const typeDefs = gql`
 
     # ROLE
 		# getOrganizationRoles: [Role]
-		# getUserRoles: [Role]
+		getUserRoles: [Role]
 
   }
   type Mutation {

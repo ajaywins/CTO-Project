@@ -1,6 +1,7 @@
 import userModel from "../model/userModel.js";
 import Joi from 'jsonwebtoken'
 
+
 export default class UserStore {
 
     async createUser(User) {
@@ -19,6 +20,17 @@ export default class UserStore {
             user = await userModel.findOne({ email })
         }
         catch (e) {
+            console.error(e);
+            return Promise.reject(new UserStore.OPERATION_UNSUCCESSFUL());
+        }
+        return user;
+    }
+    async findUserByEmail(email) {
+        let user;
+        try {
+            user = await userModel.findOne({ email });
+            console.log("user store", user);
+        } catch (e) {
             console.error(e);
             return Promise.reject(new UserStore.OPERATION_UNSUCCESSFUL());
         }
@@ -59,8 +71,18 @@ export default class UserStore {
             firstName,
             lastName,
         };
-        // const resp = this.updateUser(userId, fields);
-        // return resp;
+        const resp = this.updateUser(userId, fields);
+        return resp;
+    }
+    async updateUser(userId, attributes) {
+        try {
+            if (attributes.password) {
+                attributes.passwordHash = await this.hashPassword(attributes.password);
+            }
+        } catch (e) {
+            console.error(e);
+            return Promise.reject(new UserStore.OPERATION_UNSUCCESSFUL());
+        }
     }
 
 };
