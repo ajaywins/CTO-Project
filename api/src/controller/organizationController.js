@@ -1,4 +1,4 @@
-import OrgStore from "../store/organisationStore.js";
+import OrgStore from "../store/organizationStore.js";
 import Joi from "joi";
 import { validationError, internalServerError } from "../utils/errorUtil.js"
 import StatusCodes from "../utils/statusCodes.js"

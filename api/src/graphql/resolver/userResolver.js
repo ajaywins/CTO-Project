@@ -1,5 +1,5 @@
 import UserController from "../../controller/userController.js";
-import { ApolloError, AuthenticationError } from 'apollo-server-express';
+import ApolloError from 'apollo-server-express';
 import StatusCodes from '../../utils/statusCodes.js';
 
 const userController = new UserController();
@@ -37,7 +37,6 @@ export const userResolvers = {
             } catch (e) {
                 console.log(e)
                 help.catchThrow(e);
-
             }
             return response;
         },
@@ -58,21 +57,20 @@ export const userResolvers = {
                 phoneNumber
 
             };
-            
             let response;
-
             try {
                 response = await userController.createUser(request);
                 help.checkStatus(response);
-            } catch (e) {
-                console.log(e);
-                help.catchThrow(e);
+            } catch (err) {
+                console.log(err);
+                help.catchThrow(err);
             }
-            return response
+            console.log("erorr", response);
+            return response;
         },
+
     },
 };
-
 const help = {
     checkStatus: (response) => {
         if (response.status === StatusCodes.OK) return;

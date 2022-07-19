@@ -29,7 +29,6 @@ export default class UserStore {
         let user;
         try {
             user = await userModel.findOne({ email });
-            console.log("user store", user);
         } catch (e) {
             console.error(e);
             return Promise.reject(new UserStore.OPERATION_UNSUCCESSFUL());
@@ -65,13 +64,13 @@ export default class UserStore {
             return Promise.reject(params.error);
         }
 
-        const fields = {
+        const attribute = {
             email,
             password,
             firstName,
             lastName,
         };
-        const resp = this.updateUser(userId, fields);
+        const resp = this.updateUser(userId, attribute);
         return resp;
     }
     async updateUser(userId, attributes) {

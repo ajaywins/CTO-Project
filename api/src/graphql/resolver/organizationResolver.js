@@ -1,4 +1,4 @@
-import OrgController from "../../controller/organisationController.js";
+import OrgController from "../../controller/organizationController.js";
 import StatusCodes from "../../utils/statusCodes.js";
 import { ApolloError } from "apollo-server-express";
 

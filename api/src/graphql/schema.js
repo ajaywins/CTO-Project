@@ -1,7 +1,7 @@
 import { gql } from "apollo-server";
 import { makeExecutableSchema } from "@graphql-tools/schema";
 import { userResolvers } from "./resolver/userResolver.js";
-import { OrgRsolvers } from "./resolver/organisationResolver.js";
+import { OrgRsolvers } from "./resolver/organizationResolver.js";
 import pkg from 'lodash';
 const { merge } = pkg;
 

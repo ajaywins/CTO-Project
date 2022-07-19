@@ -1,4 +1,4 @@
-import orgModel from "../model/organisationModel.js";
+import orgModel from "../model/organizationModel.js";
 
 export default class OrgStore {
 

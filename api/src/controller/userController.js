@@ -28,10 +28,9 @@ export default class UserController {
             _id: userId,
             organizationId,
         },
-            process.env.JWT_SECRET,
+            process.env.SECRET_KEY,
         );
     }
-
     async createUser(req, res) {
         let response = {
             status: StatusCodes.UNKNOWN_CODE,
@@ -55,119 +54,49 @@ export default class UserController {
 
         const hashPassword = await bcrypt.hash(password, 10);
 
-        const attribute = {
-            email,
-            firstName,
-            lastName,
-            phoneNumber,
-            password: hashPassword
-
-        };
-
         // lowercase email
         let formattedEmail;
-        let existingUser;
         if (email) {
             formattedEmail = email.toLowerCase();
-            /**
-             * Make sure that there isn't an existing account
-             * associated with this email address
-             */
+            /*
+            * Make sure that there isn't an existing account
+            * associated with this email address
+            */
+            let existingUser;
+            existingUser = await this.storage.findUserByEmail(formattedEmail);
             try {
-                existingUser = await this.storage.findUserByEmail(email);
-                console.log("log",existingUser);
-            } catch (e) {
-                await saveLogs("UserController::register", e)
-                return internalServerError(e, response);
-            }
-
-            if (existingUser) {
-                const errorMsg = this.controller.message.getMessage('emailExistsError');
-                await saveLogs("UserController::register", errorMsg)
-                return badRequestError(errorMsg, response);
-            }
-        }
-        let isAlreadyStandardUser = false;
-        if (existingUser) {
-            try {
-                const roleResp = await this.controller.role.getUserRoles({
-                    userId: existingUser._id
-                });
-                // user already has admin account, can't create another with the same phone number
-                if (roleResp.roles && roleResp.roles.length > 0) {
-                    const errorMsg = this.controller.message.getMessage('phoneExistsError');
-                    await saveLogs("UserController::register", errorMsg)
-                    return badRequestError(errorMsg, response);
+                if (existingUser) {
+                    // let response = {
+                    //     message: "user already exist",
+                    //     status: StatusCodes.BAD_REQUEST
+                    // }
+                    // return response;
+                    const err = 'user already exist'
+                    await saveLogs("UserController::register", err)
+                    return Error(err, response);
                 }
-
-                isAlreadyStandardUser = true;
+                else {
+                    const attributes = {
+                        email: formattedEmail,
+                        password: hashPassword,
+                        firstName,
+                        lastName,
+                        phoneNumber,
+                        createdAt: Time.now(),
+                    };
+                    let user;
+                    try {
+                        user = await this.storage.createUser(attributes);
+                    } catch (e) {
+                        await saveLogs("UserController::register", e)
+                    }
+                    return user;
+                }
             } catch (e) {
                 await saveLogs("UserController::register", e)
                 return internalServerError(e, response);
             }
         }
-
-        /**
-         * Save the user to storage
-         */
-        let user;
-        if (isAlreadyStandardUser) {
-            const attributes = {
-                email: formattedEmail,
-                password,
-                firstName,
-                lastName,
-            };
-
-            try {
-                user = await this.storage.createAdminUserFromStandardUser(existingUser._id, attributes);
-            } catch (e) {
-                await saveLogs("UserController::register", e)
-                return internalServerError(e, response);
-            }
-        } else {
-            const attributes = {
-                email: formattedEmail,
-                password,
-                firstName,
-                lastName,
-                phoneNumber,
-                createdAt: Time.now(),
-            };
-
-            try {
-                user = await this.storage.createUser(attributes);
-            } catch (e) {
-                await saveLogs("UserController::register", e)
-                return internalServerError(e, response);
-            }
-        }
-
-        /**
-         * if user has oustanding roles, update them
-         * with the userId. email check, ensure this
-         * only fires for admin registrations
-         */
-        if (email) {
-            const updateRoleRequest = {
-                userId: user._id.toString(),
-                phoneNumber: user.phoneNumber,
-            };
-            try {
-                await this.controller.role.assignUserIdToRoles(updateRoleRequest);
-            } catch (e) {
-                await saveLogs("UserController::register", e)
-                return internalServerError(e, response);
-            }
-        }
-        response = {
-            status: StatusCodes.OK,
-            user,
-            token: this.generateJWT(user._id),
-        };
-        console.log("res", token);
-        return response;
-
     }
     async userLogin(req, res) {
         try {
