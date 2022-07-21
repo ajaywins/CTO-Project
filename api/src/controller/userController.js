@@ -4,11 +4,8 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import StatusCodes from '../utils/statusCodes.js';
 import saveLogs from '../utils/saveLogs.js';
-import {
-    internalServerError,
-    badRequestError,
-} from '../utils/errorUtil.js';
 import * as Time from '../utils/Times.js'
+import formatPhoneNumber from "../utils/formatPhoneNumber.js";
 
 
 export default class UserController {
@@ -31,6 +28,7 @@ export default class UserController {
             process.env.SECRET_KEY,
         );
     }
+
     async createUser(req, res) {
         let response = {
             status: StatusCodes.UNKNOWN_CODE,
@@ -52,52 +50,60 @@ export default class UserController {
             phoneNumber
         } = params.value;
 
+        const formattedPhoneNumber = formatPhoneNumber(phoneNumber);
+
         const hashPassword = await bcrypt.hash(password, 10);
 
         // lowercase email
         let formattedEmail;
+        let existingUser;
+        let existingNumber;
+        let user;
         if (email) {
             formattedEmail = email.toLowerCase();
             /*
             * Make sure that there isn't an existing account
             * associated with this email address
             */
-            let existingUser;
-            existingUser = await this.storage.findUserByEmail(formattedEmail);
             try {
-                if (existingUser) {
-                    // let response = {
-                    //     message: "user already exist",
-                    //     status: StatusCodes.BAD_REQUEST
-                    // }
-                    // return response;
-                    const err = 'user already exist'
-                    await saveLogs("UserController::register", err)
-                    return Error(err, response);
-                }
-                else {
-                    const attributes = {
-                        email: formattedEmail,
-                        password: hashPassword,
-                        firstName,
-                        lastName,
-                        phoneNumber,
-                        createdAt: Time.now(),
-                    };
-                    let user;
-                    try {
-                        user = await this.storage.createUser(attributes);
-                    } catch (e) {
-                        await saveLogs("UserController::register", e)
+                existingUser = await this.storage.findUserByEmail(formattedEmail);
+                if (!existingUser) {
+                    existingNumber = await this.storage.findUserByPhoneNumber(formattedPhoneNumber);
+                    if (!existingNumber) {
+                        const attributes = {
+                            email: formattedEmail,
+                            password: hashPassword,
+                            firstName,
+                            lastName,
+                            phoneNumber: formattedPhoneNumber,
+                            createdAt: Time.now(),
+                        };
+                        try {
+                            user = await this.storage.createUser(attributes);
+                        } catch (e) {
+                            await saveLogs("UserController::register", e)
+                        }
+                    } else {
+                        const err = 'user with same number already exist'
+                        await saveLogs("UserController::register", err)
+                        return Error(err, response)
+
                     }
-                    return user;
+                } else {
+                    const err = 'user with same email already exist'
+                    await saveLogs("UserController::register", err)
+                    return Error(err, response)
+
                 }
             } catch (e) {
                 await saveLogs("UserController::register", e)
-                return internalServerError(e, response);
+                return Error(e, response);
             }
         }
+        return user;
+
     }
+
     async userLogin(req, res) {
         try {
             const { email, password } = req;
@@ -105,33 +111,27 @@ export default class UserController {
             if (email && password) {
                 const user = await this.storage.loginUser(email);
                 if (user != null) {
-                    const isMatch = await bcrypt.compare(password, user.password);
+                    const isMatch = bcrypt.compare(password, user.password);
                     if (user.email === email && isMatch) {
-                        // token generate
-                        const token = jwt.sign(
-                            { userID: user._id },
-                            process.env.SECRET_KEY,
-                            { expiresIn: "5m" });
                         let response = {
-                            message: "login sucessfull",
-                            token: token,
-                            status: StatusCodes.OK
+                            message: "Login successful",
+                            status: StatusCodes.UNKNOWN_CODE,
+                            token: this.generateJWT(user._id),
                         }
                         return response;
                     }
                     else {
                         let response = {
-                            message: "invalid credetial",
-                            status: StatusCodes.UNKNOWN_CODE
+                            message: "Login successful",
+                            status: StatusCodes.OK,
+                            token: token,
                         }
                         return response;
                     }
                 } else {
-                    let response = {
-                        message: "user not found",
-                        status: StatusCodes.NOT_FOUND
-                    }
-                    return response;
+                    let response
+                    const err = 'user email already exist'
+                    return Error(err, response);
                 }
             } else {
                 let response = {
@@ -140,7 +140,8 @@ export default class UserController {
                 }
                 return response;
             }
-        } catch (e) {
+        }
+        catch (e) {
             console.log(e);
             let response = {
                 message: "login failed",
@@ -149,4 +150,92 @@ export default class UserController {
             return response;
         }
     };
+    // async updateUserInfo(request) {
+    //     let response = {
+    //         status: StatusCodes.UNKNOWN_CODE,
+    //     };
+    //     const params = Joi.object().keys({
+    //         userId: Joi.string().optional(),
+    //         email: Joi.string().optional(),
+    //         firstName: Joi.string().optional(),
+    //         lastName: Joi.string().optional(),
+    //         phoneNumber: Joi.string().optional(),
+    //         phoneCode: Joi.string().optional(),
+    //     }).validate(request);
+
+
+    //     if (params.error) {
+    //         console.error('updateUserInfo - validation error');
+    //         return Error(params.error, response);
+    //     }
+
+    //     const {
+    //         userId,
+    //         email,
+    //         firstName,
+    //         lastName,
+    //         phoneNumber
+    //     } = params.value;
+
+    //     const attributes = {
+    //         email,
+    //         firstName,
+    //         lastName,
+    //         phoneNumber,
+
+    //     };
+
+    //     let user;
+    //     try {
+    //         user = await this.storage.updateUser(userId, attributes);
+    //     } catch (e) {
+    //         return Error(e, response);
+    //     }
+
+    //     response = {
+    //         status: StatusCodes.OK,
+    //         user,
+    //     };
+
+    //     return response;
+    // }
+    async get(request) {
+        let response = {
+            status: StatusCodes.UNKNOWN_CODE,
+        };
+        const params = Joi.object().keys({
+            _id: Joi.string().required(),
+        }).validate(request);
+
+        if (params.error) {
+            return validationError(params.error, response);
+        }
+        const {
+            _id
+        } = params.value;
+
+        let user;
+        try {
+            user = await this.storage.findUserById(_id);
+        } catch (e) {
+            return Error(e, response);
+        }
+
+        if (!user) {
+            const errorMsg = ('userNotFound', {
+                userId
+            });
+            return Error(errorMsg, response);
+        }
+
+        response = {
+            status: StatusCodes.OK,
+            user,
+        };
+        return response;
+    }
+
+
+
+
 }

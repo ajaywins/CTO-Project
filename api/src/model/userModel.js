@@ -1,4 +1,5 @@
 import mongoose from "mongoose"
+import shortid from "shortid";
 
 export const schema = mongoose.Schema;
 
@@ -24,6 +25,10 @@ const userSchema = new schema({
     phoneNumber:{
       type:String,
       required:false
+    },
+    _id: {
+      type: String,
+      default: shortid.generate,
     }
 })
 const userModel = mongoose.model('user', userSchema);

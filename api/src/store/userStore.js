@@ -44,7 +44,7 @@ export default class UserStore {
             console.error(e);
             return Promise.reject(new UserStore.OPERATION_UNSUCCESSFUL());
         }
-        // delete attributes.password;
+        delete attributes.password;
 
         const params = Joi.object().keys({
             email: Joi.string().required(),
@@ -73,17 +73,60 @@ export default class UserStore {
         const resp = this.updateUser(userId, attribute);
         return resp;
     }
-    async updateUser(userId, attributes) {
+    // async updateUser(userId, attributes) {
+    //     // try {
+    //     //     if (attributes.password) {
+    //     //         // attributes.passwordHash = await this.hashPassword(attributes.password);
+    //     //     }
+    //     // } catch (e) {
+    //     //     console.error(e);
+    //     //     return Promise.reject(new UserStore.OPERATION_UNSUCCESSFUL());
+    //     // }
+    //     // Object.keys(attributes).forEach(key => attributes[key] === undefined && delete attributes[key]);
+
+    //     // const params = Joi.object().keys(Object.keys(attributes).reduce((acc, key) => {
+    //     //     if (updateWhitelist.hasOwnProperty(key)) acc[key] = updateWhitelist[key];
+    //     //     return acc;
+    //     // }, {})).validate(attributes);
+
+    //     // if (params.error) {
+    //     //     return Promise.reject(params.error);
+    //     // }
+    //     // const updateUserFields = attributes.params.value;
+
+    //     let user;
+    //     try {
+    //         user = await userModel.findOne({ _id: userId }, updateUserFields, { new: true });
+    //     } catch (e) {
+    //         console.error(e);
+    //         return Promise.reject(new UserStore.OPERATION_UNSUCCESSFUL());
+    //     }
+    //     console.log(user);
+    //     return user;
+    // }
+    async findUserById(_id) {
+        let user;
+
         try {
-            if (attributes.password) {
-                attributes.passwordHash = await this.hashPassword(attributes.password);
-            }
+            user = await userModel.findOne({ _id });
         } catch (e) {
             console.error(e);
             return Promise.reject(new UserStore.OPERATION_UNSUCCESSFUL());
         }
+        return user;
     }
+    async findUserByPhoneNumber(phoneNumber) {
+        let user;
 
+        try {
+            user = await userModel.findOne({ phoneNumber });
+        } catch (e) {
+            console.error(e);
+            return Promise.reject(new UserStore.OPERATION_UNSUCCESSFUL());
+        }
+
+        return user;
+    }
 };
 
 UserStore.OPERATION_UNSUCCESSFUL = class extends Error {

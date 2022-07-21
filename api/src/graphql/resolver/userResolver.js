@@ -1,24 +1,35 @@
 import UserController from "../../controller/userController.js";
-import ApolloError from 'apollo-server-express';
+import { ApolloError, AuthenticationError } from 'apollo-server-express';
 import StatusCodes from '../../utils/statusCodes.js';
+// import { AuthenticationError } from "apollo-server-express";
 
 const userController = new UserController();
 
 export const userResolvers = {
 
     Query: {
-        //     getUser: async (parent, args, context) => {
-        //         try {
-        //             response = await userController.user.get(request);
-        //             return response;
-        //         } catch (e) {
-        //             console.log(e);
-        //         }
+        getCurrentUser: async (parent, args, context) => {
+            // const { currentUser } = context;
 
-        //         return response.user;
-        //     },
+            // if (!currentUser) {
+            //     throw new AuthenticationError(
+            //         'Authentication is required',
+            //     );
+            // }
+            // const userId = (parent && parent.userId ? parent.userId : currentUser._id).toString();
+            const request =
+                args.params
+            let response;
+            try {
+                response = await userController.get(request);
+                help.checkStatus(response);
+            } catch (e) {
+                help.catchThrow(e);
+            }
+
+            return response.user;
+        },
     },
-
     Mutation: {
         userLogin: async (parent, args, context) => {
             const {
@@ -34,13 +45,20 @@ export const userResolvers = {
             try {
                 response = await userController.userLogin(request);
                 help.checkStatus(response);
-            } catch (e) {
-                console.log(e)
-                help.catchThrow(e);
+                return response;
+            } catch (err) {
+                console.log(err)
+                help.catchThrow(err);
             }
-            return response;
         },
         createUser: async (parent, args, context) => {
+            // const { currentUser } = context;
+
+            // if (!currentUser) {
+            //     throw new AuthenticationError(
+            //         'Authentication is required',
+            //     );
+            // }
             const {
                 email,
                 firstName,
@@ -55,7 +73,6 @@ export const userResolvers = {
                 email,
                 password,
                 phoneNumber
-
             };
             let response;
             try {
@@ -65,10 +82,38 @@ export const userResolvers = {
                 console.log(err);
                 help.catchThrow(err);
             }
-            console.log("erorr", response);
             return response;
         },
 
+        // updateUserInfo: async (_parent, args, context) => {
+        //     // const { currentUser } = context;
+
+        //     // if (!currentUser) {
+        //     //     throw new AuthenticationError(
+        //     //         'Authentication is required',
+        //     //     );
+        //     // }
+
+        //     const {
+        //         email, firstName, lastName, phoneNumber,
+        //     } = args;
+
+        //     const request = {
+        //         userId: currentUser._id,
+        //         email,
+        //         firstName,
+        //         lastName,
+        //         phoneNumber,
+        //     };
+        //     let response;
+        //     try {
+        //         response = await userController.updateUserInfo(request);
+        //         help.checkStatus(response);
+        //     } catch (e) {
+        //         help.catchThrow(e);
+        //     }
+        //     return response.user;
+        // },
     },
 };
 const help = {
