@@ -1,15 +1,12 @@
-import { Schema, model } from 'mongoose';
-import Joi from 'joi';
-import RoleModel from '../model/role.js';
+import roleModel from '../model/roleModel.js';
 
-export const RoleSchema = new Schema(RoleModel);
-export const Role = model('Role', RoleSchema);
+
 
 export default class RoleStore {
 
     async createRole(attributes) {
         let savedRole;
-        const role = new Role(attributes);
+        const role = new roleModel(attributes);
         try {
             savedRole = await role.save();
         } catch (e) {

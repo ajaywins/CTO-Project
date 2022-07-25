@@ -1,5 +1,6 @@
 import mongoose from "mongoose"
 import shortid from "shortid";
+import AccessLevels from '../utils/accessLevel.js'
 
 export const schema = mongoose.Schema;
 
@@ -29,7 +30,12 @@ const userSchema = new schema({
     _id: {
       type: String,
       default: shortid.generate,
-    }
+    },
+    role: {
+      type: String,
+      enum: [AccessLevels.User, AccessLevels.Admin,AccessLevels.SuperAdmin],
+      required: true,
+  },
 })
 const userModel = mongoose.model('user', userSchema);
 export default userModel;

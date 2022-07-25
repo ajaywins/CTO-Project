@@ -25,7 +25,6 @@ app.use(async (req, res, next) => {
       const currentUser = await jwt.verify(token, process.env.SECRET_KEY);
       if (currentUser) {
         req.currentUser = currentUser;
-
       }
     } catch (e) {
       console.error(e);
@@ -43,12 +42,13 @@ const PORT = process.env.PORT || 3000
 await server.start()
 server.applyMiddleware({ app });
 
+app.listen({ port: 4000 }, () =>
+  console.log(`Now browse to http://localhost:${PORT}` + server.graphqlPath)
+);
+
 // server.listen().then(() => {
 //   console.log(`
 //       Server is running listening on port ${PORT}
 //       Explore at https://studio.apollographql.com/sandbox
 //     `);
 // });
-app.listen({ port: 4000 }, () =>
-  console.log(`Now browse to http://localhost:${PORT}` + server.graphqlPath)
-);

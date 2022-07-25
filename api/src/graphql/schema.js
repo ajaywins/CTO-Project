@@ -14,6 +14,8 @@ const typeDefs = gql`
     lastName: String
 	  password:String
     phoneNumber:String
+    # organizationId:Organization
+    role: String
 
   }
   type Message{
@@ -30,12 +32,12 @@ const typeDefs = gql`
   
 
   type Role {
-		_id: String!
-		acceptedAt: Int!
+		_id: String
+		acceptedAt: Int
 		userId: String
 		phoneNumber: String
 		phoneCode: String
-		organizationId: String!
+		organizationId: String
 		user: User
 		organization: Organization
 		accessLevel: String!
@@ -48,12 +50,23 @@ const typeDefs = gql`
     lastName: String
     password:String
     phoneNumber:String
+    role: String
   }
   input OrganizationInput {
     name: String!
     ownerName: String
     email: String
   }
+
+  input RoleInput {
+		_id: String
+		acceptedAt: Int
+		userId: String
+		phoneNumber: String
+		phoneCode: String
+		organizationId: String
+		accessLevel: String!
+	}
   type Query {
     #User
     getCurrentUser(params:UserInput): User
@@ -74,23 +87,13 @@ const typeDefs = gql`
     createOrg(params: OrganizationInput): Organization
 
     # ROLE
-		# createRole(accessLevel: String!): Role
+		createRole(params: RoleInput): Role
   }
 `;
 const resolvers = merge(userResolvers, OrgRsolvers);
 
 export const executableSchema = makeExecutableSchema({
   resolvers: {
-    Role: {
-      user: (role, args, context) =>
-        userResolvers.Query.getCurrentUser(role, args, context),
-      organization: (role, args, context) =>
-        organizationResolvers.Query.getCurrentOrganization(
-          role,
-          args,
-          context,
-        ),
-    },
     ...resolvers,
   },
   typeDefs,

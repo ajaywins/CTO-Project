@@ -1,7 +1,7 @@
 const AccessLevels = Object.freeze({
     SuperAdmin: 'SuperAdmin',
     Admin: 'Admin',
-    Server: 'Server',
+    User: 'User',
 });
 
 export default AccessLevels;

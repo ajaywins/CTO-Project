@@ -1,24 +1,32 @@
 import OrgController from "../../controller/organizationController.js";
 import StatusCodes from "../../utils/statusCodes.js";
 import { ApolloError } from "apollo-server-express";
+import { useAuthValidator } from '../../utils/authValidator.js';
 
 const orgController = new OrgController();
 
 export const OrgRsolvers = {
     Query: {
-        //     getOrg: async (parent, args, context) => {
-        //         try {
-        //             response = await OrgController.org.get(request);
-        //             return response;
-        //         } catch (e) {
-        //             console.log(e);
-        //         }
-        //         return response.user;
-        //     },
+        // getOrg: async (parent, args, context) => {
+        //     try {
+        //         response = await OrgController.org.get(request);
+        //         return response;
+        //     } catch (e) {
+        //         console.log(e);
+        //     }
+        //     return response.user;
+        // },
     },
 
     Mutation: {
         createOrg: async (parent, args, context) => {
+            const { currentUser } = context;
+            if (!currentUser) {
+                throw new AuthenticationError(
+                    'Authentication is required',
+                );
+            }
+
             const {
                 email,
                 ownerName,
@@ -46,7 +54,7 @@ const help = {
     checkStatus: (response) => {
         if (response.status === StatusCodes.OK) return;
 
-        if (response.status !== StatusCodes.NOT_FOUND) return;
+        if (response.status === StatusCodes.NOT_FOUND) return;
 
         throw new ApolloError(
             response.error.message,

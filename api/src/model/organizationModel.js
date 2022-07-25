@@ -20,8 +20,7 @@ const orgSchema = new schema({
     _id: {
         type: String,
         default: shortid.generate,
-      }
-
+    },
 });
 const orgModel = mongoose.model('org', orgSchema);
 export default orgModel;

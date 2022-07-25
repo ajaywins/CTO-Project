@@ -42,6 +42,7 @@ export default class UserController {
             email: Joi.string().required(),
             password: Joi.string().required(),
             phoneNumber: Joi.string().required(),
+            role: Joi.string().required()
         });
         const params = schema.validate(req, { abortEarly: false });
 
@@ -50,7 +51,8 @@ export default class UserController {
             firstName,
             lastName,
             password,
-            phoneNumber
+            phoneNumber,
+            role
         } = params.value;
 
         const formattedPhoneNumber = formatPhoneNumber(phoneNumber);
@@ -79,6 +81,7 @@ export default class UserController {
                             firstName,
                             lastName,
                             phoneNumber: formattedPhoneNumber,
+                            role,
                             createdAt: Time.now(),
                         };
                         try {
@@ -119,7 +122,7 @@ export default class UserController {
                         let response = {
                             message: "Login successful",
                             status: StatusCodes.UNKNOWN_CODE,
-                            token: this.generateJWT(user._id),
+                            token: this.generateJWT(user),
                         }
                         return response;
                     }
