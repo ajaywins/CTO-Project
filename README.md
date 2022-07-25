@@ -31,4 +31,4 @@ Check This Out enables businesses to accelerate and amplify their word of mouth 
 &nbsp;
 ## Postman collection URL:-
 
-https://www.getpostman.com/collections/11a91768014add02c5ce
+https://www.getpostman.com/collections/5f880d431488863f95b0
