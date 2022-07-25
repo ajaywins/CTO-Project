@@ -36,15 +36,15 @@ export default class UserStore {
         return user;
     }
     async createAdminUserFromStandardUser(userId, attributes) {
-        try {
-            if (attributes.password) {
-                attributes.passwordHash = await this.hashPassword(attributes.password);
-            }
-        } catch (e) {
-            console.error(e);
-            return Promise.reject(new UserStore.OPERATION_UNSUCCESSFUL());
-        }
-        delete attributes.password;
+        // try {
+        //     if (attributes.password) {
+        //         attributes.passwordHash = await this.hashPassword(attributes.password);
+        //     }
+        // } catch (e) {
+        //     console.error(e);
+        //     return Promise.reject(new UserStore.OPERATION_UNSUCCESSFUL());
+        // }
+        // delete attributes.password;
 
         const params = Joi.object().keys({
             email: Joi.string().required(),
@@ -70,45 +70,26 @@ export default class UserStore {
             firstName,
             lastName,
         };
-        const resp = this.updateUser(userId, attribute);
+        const resp = this.updateUser(_id, attribute);
         return resp;
     }
-    // async updateUser(userId, attributes) {
-    //     // try {
-    //     //     if (attributes.password) {
-    //     //         // attributes.passwordHash = await this.hashPassword(attributes.password);
-    //     //     }
-    //     // } catch (e) {
-    //     //     console.error(e);
-    //     //     return Promise.reject(new UserStore.OPERATION_UNSUCCESSFUL());
-    //     // }
-    //     // Object.keys(attributes).forEach(key => attributes[key] === undefined && delete attributes[key]);
+    async updateUser(_id, attributes) {
 
-    //     // const params = Joi.object().keys(Object.keys(attributes).reduce((acc, key) => {
-    //     //     if (updateWhitelist.hasOwnProperty(key)) acc[key] = updateWhitelist[key];
-    //     //     return acc;
-    //     // }, {})).validate(attributes);
-
-    //     // if (params.error) {
-    //     //     return Promise.reject(params.error);
-    //     // }
-    //     // const updateUserFields = attributes.params.value;
-
-    //     let user;
-    //     try {
-    //         user = await userModel.findOne({ _id: userId }, updateUserFields, { new: true });
-    //     } catch (e) {
-    //         console.error(e);
-    //         return Promise.reject(new UserStore.OPERATION_UNSUCCESSFUL());
-    //     }
-    //     console.log(user);
-    //     return user;
-    // }
+        let user;
+        try {
+            user = await userModel.findByIdAndUpdate(_id, attributes, { new: true });
+        } catch (e) {
+            console.error(e);
+            return Promise.reject(new UserStore.OPERATION_UNSUCCESSFUL());
+        }
+        console.log(user);
+        return user;
+    }
     async findUserById(_id) {
         let user;
 
         try {
-            user = await userModel.findOne({ _id });
+            user = await userModel.findById({ _id });
         } catch (e) {
             console.error(e);
             return Promise.reject(new UserStore.OPERATION_UNSUCCESSFUL());

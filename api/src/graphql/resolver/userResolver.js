@@ -9,14 +9,14 @@ export const userResolvers = {
 
     Query: {
         getCurrentUser: async (parent, args, context) => {
-            // const { currentUser } = context;
+            const { currentUser } = context;
 
-            // if (!currentUser) {
-            //     throw new AuthenticationError(
-            //         'Authentication is required',
-            //     );
-            // }
-            // const userId = (parent && parent.userId ? parent.userId : currentUser._id).toString();
+            if (!currentUser) {
+                throw new AuthenticationError(
+                    'Authentication is required',
+                );
+            }
+            const userId = (parent && parent.userId ? parent.userId : currentUser._id).toString();
             const request =
                 args.params
             let response;
@@ -52,20 +52,19 @@ export const userResolvers = {
             }
         },
         createUser: async (parent, args, context) => {
-            // const { currentUser } = context;
-
-            // if (!currentUser) {
-            //     throw new AuthenticationError(
-            //         'Authentication is required',
-            //     );
-            // }
+            const { currentUser } = context;
+            console.log(context);
+            if (!currentUser) {
+                throw new AuthenticationError(
+                    'Authentication is required',
+                );
+            }
             const {
                 email,
                 firstName,
                 lastName,
                 password,
                 phoneNumber
-
             } = args.params;
             const request = {
                 firstName,
@@ -85,35 +84,39 @@ export const userResolvers = {
             return response;
         },
 
-        // updateUserInfo: async (_parent, args, context) => {
-        //     // const { currentUser } = context;
+        updateUserInfo: async (_parent, args, context) => {
+            const { currentUser } = context;
 
-        //     // if (!currentUser) {
-        //     //     throw new AuthenticationError(
-        //     //         'Authentication is required',
-        //     //     );
-        //     // }
+            if (!currentUser) {
+                throw new AuthenticationError(
+                    'Authentication is required',
+                );
+            }
 
-        //     const {
-        //         email, firstName, lastName, phoneNumber,
-        //     } = args;
+            const {
+                _id,
+                email,
+                firstName,
+                lastName,
+                phoneNumber,
+            } = args.params;
 
-        //     const request = {
-        //         userId: currentUser._id,
-        //         email,
-        //         firstName,
-        //         lastName,
-        //         phoneNumber,
-        //     };
-        //     let response;
-        //     try {
-        //         response = await userController.updateUserInfo(request);
-        //         help.checkStatus(response);
-        //     } catch (e) {
-        //         help.catchThrow(e);
-        //     }
-        //     return response.user;
-        // },
+            const request = {
+                _id,
+                email,
+                firstName,
+                lastName,
+                phoneNumber,
+            };
+            let response;
+            try {
+                response = await userController.updateUserInfo(request);
+                help.checkStatus(response);
+            } catch (e) {
+                help.catchThrow(e);
+            }
+            return response.user;
+        },
     },
 };
 const help = {

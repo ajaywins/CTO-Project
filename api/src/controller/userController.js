@@ -24,8 +24,11 @@ export default class UserController {
         return jwt.sign({
             _id: userId,
             organizationId,
+
         },
+
             process.env.SECRET_KEY,
+            { expiresIn: '2h' }
         );
     }
 
@@ -150,55 +153,55 @@ export default class UserController {
             return response;
         }
     };
-    // async updateUserInfo(request) {
-    //     let response = {
-    //         status: StatusCodes.UNKNOWN_CODE,
-    //     };
-    //     const params = Joi.object().keys({
-    //         userId: Joi.string().optional(),
-    //         email: Joi.string().optional(),
-    //         firstName: Joi.string().optional(),
-    //         lastName: Joi.string().optional(),
-    //         phoneNumber: Joi.string().optional(),
-    //         phoneCode: Joi.string().optional(),
-    //     }).validate(request);
+    async updateUserInfo(request) {
+        let response = {
+            status: StatusCodes.UNKNOWN_CODE,
+        };
+        const params = Joi.object().keys({
+            _id: Joi.string().optional(),
+            email: Joi.string().optional(),
+            firstName: Joi.string().optional(),
+            lastName: Joi.string().optional(),
+            phoneNumber: Joi.string().optional(),
+            phoneCode: Joi.string().optional(),
+        }).validate(request);
 
 
-    //     if (params.error) {
-    //         console.error('updateUserInfo - validation error');
-    //         return Error(params.error, response);
-    //     }
+        if (params.error) {
+            console.error('updateUserInfo - validation error');
+            return Error(params.error, response);
+        }
 
-    //     const {
-    //         userId,
-    //         email,
-    //         firstName,
-    //         lastName,
-    //         phoneNumber
-    //     } = params.value;
+        const {
+            _id,
+            email,
+            firstName,
+            lastName,
+            phoneNumber
+        } = params.value;
 
-    //     const attributes = {
-    //         email,
-    //         firstName,
-    //         lastName,
-    //         phoneNumber,
+        const attributes = {
+            email,
+            firstName,
+            lastName,
+            phoneNumber,
 
-    //     };
+        };
 
-    //     let user;
-    //     try {
-    //         user = await this.storage.updateUser(userId, attributes);
-    //     } catch (e) {
-    //         return Error(e, response);
-    //     }
+        let user;
+        try {
+            user = await this.storage.updateUser(_id, attributes);
+        } catch (e) {
+            return Error(e, response);
+        }
 
-    //     response = {
-    //         status: StatusCodes.OK,
-    //         user,
-    //     };
+        response = {
+            status: StatusCodes.OK,
+            user,
+        };
 
-    //     return response;
-    // }
+        return response;
+    }
     async get(request) {
         let response = {
             status: StatusCodes.UNKNOWN_CODE,
