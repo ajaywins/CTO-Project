@@ -12,16 +12,16 @@ export default class OrganisationStore {
         }
         return org;
     }
-       async getOrganizations() {
-        let orgs;
+    async updateOrg(_id, attributes) {
 
+        let org;
         try {
-            orgs = await Organization.find().sort({ 'name': 1 });
+            org = await orgModel.findByIdAndUpdate(_id, attributes, { new: true });
         } catch (e) {
             console.error(e);
-            return Promise.reject(new OrganisationStore.OPERATION_UNSUCCESSFUL());
+            return Promise.reject(new orgModel.OPERATION_UNSUCCESSFUL());
         }
-        return orgs;
+        return org;
     }
 
 };

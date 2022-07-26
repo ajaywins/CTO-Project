@@ -39,34 +39,56 @@ export default class OrgController {
         };
         let org;
         try {
-             org = await organisationStore.createOrg(attribute);
+            org = await organisationStore.createOrg(attribute);
             console.log("controller", org);
             return org;
         } catch (e) {
             let errorMsg = e.message + " exception in creating Organization"
             return internalServerError(errorMsg, response)
         }
-        // let organizationId = org._id.toString()
-        // const createRoleRequest = {
-        //     userId,
-        //     phoneNumber: userResp.user.phoneNumber,
-        //     organizationId: organizationId,
-        //     accessLevel: AccessLevels.Admin,
-        //     doNotSendText: true,
-        // }
-        // let createRoleResponse
-        // try {
-        //     createRoleResponse = await this.controller.role.createRole(
-        //         createRoleRequest,
-        //     )
-        // } catch (e) {
-        //     let errorMsg = e.message + " exception in creating user role"
-        //     await saveLogs(
-        //         "OrganizationController::createOrganization",
-        //         errorMsg,
-        //         organizationId,
-        //     )
-        //     return internalServerError(errorMsg, response)
-        // }
+    }
+    async updateOrganization(request) {
+        let response = {
+            status: StatusCodes.UNKNOWN_CODE,
+        };
+        const params = Joi.object().keys({
+            _id: Joi.string().required(),
+            email: Joi.string().required(),
+            name: Joi.string().required(),
+            ownerName: Joi.string().required(),
+        }).validate(request);
+
+        if (params.error) {
+            console.error('updateOrganization - validation error');
+            return Error(params.error, response);
+        }
+
+        const {
+            _id,
+            email,
+            name,
+            ownerName,
+        } = params.value;
+
+        const attributes = {
+
+            email,
+            name,
+            ownerName,
+        };
+
+        let org;
+        try {
+            org = await organisationStore.updateOrg(_id, attributes);
+        } catch (e) {
+            return Error(e, response);
+        }
+
+        response = {
+            status: StatusCodes.OK,
+            org,
+        };
+
+        return response.org;
     }
 }

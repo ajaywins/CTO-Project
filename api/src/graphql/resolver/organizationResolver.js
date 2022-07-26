@@ -1,6 +1,6 @@
 import OrgController from "../../controller/organizationController.js";
 import StatusCodes from "../../utils/statusCodes.js";
-import { ApolloError } from "apollo-server-express";
+// import { ApolloError, AuthenticationError } from "apollo-server-express";
 import { useAuthValidator } from '../../utils/authValidator.js';
 
 const orgController = new OrgController();
@@ -17,15 +17,10 @@ export const OrgRsolvers = {
         //     return response.user;
         // },
     },
-
     Mutation: {
         createOrg: async (parent, args, context) => {
-            const { currentUser } = context;
-            if (!currentUser) {
-                throw new AuthenticationError(
-                    'Authentication is required',
-                );
-            }
+            useAuthValidator(context);
+
 
             const {
                 email,
@@ -48,7 +43,33 @@ export const OrgRsolvers = {
             }
             return response
         },
-    },
+
+        updateOrg: async (parent, args, context) => {
+            useAuthValidator(context);
+            const {
+                _id,
+                email,
+                ownerName,
+                name,
+            } = args.params;
+
+            const request = {
+                _id,
+                email,
+                ownerName,
+                name,
+            };
+            let response;
+            try {
+                response = await orgController.updateOrganization(request);
+                help.checkStatus(response);
+            } catch (e) {
+                console.log(e);
+                help.catchThrow(e);
+            }
+            return response
+        }
+    }
 };
 const help = {
     checkStatus: (response) => {
@@ -56,10 +77,10 @@ const help = {
 
         if (response.status === StatusCodes.NOT_FOUND) return;
 
-        throw new ApolloError(
-            response.error.message,
-            response.status.toString(),
-        );
+        // throw new ApolloError(
+        //     response.error.message,
+        //     response.status.toString(),
+        // );
     },
     catchThrow: (err) => {
         console.log(err);

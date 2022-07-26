@@ -1,6 +1,7 @@
 import UserController from "../../controller/userController.js";
 import { ApolloError, AuthenticationError } from 'apollo-server-express';
 import StatusCodes from '../../utils/statusCodes.js';
+import { useAuthValidator } from "../../utils/authValidator.js";
 
 const userController = new UserController();
 
@@ -8,13 +9,7 @@ export const userResolvers = {
 
     Query: {
         getCurrentUser: async (parent, args, context) => {
-            const { currentUser } = context;
-
-            if (!currentUser) {
-                throw new AuthenticationError(
-                    'Authentication is required',
-                );
-            }
+            useAuthValidator(context);
             // const userId = (parent && parent.userId ? parent.userId : currentUser._id).toString();
             const request =
                 args.params
@@ -51,12 +46,7 @@ export const userResolvers = {
             }
         },
         createUser: async (parent, args, context) => {
-            const { currentUser } = context;
-            if (!currentUser) {
-                throw new AuthenticationError(
-                    'Authentication is required',
-                );
-            }
+            useAuthValidator(context);
             const {
                 email,
                 firstName,
@@ -85,14 +75,6 @@ export const userResolvers = {
         },
 
         updateUserInfo: async (_parent, args, context) => {
-            const { currentUser } = context;
-
-            if (!currentUser) {
-                throw new AuthenticationError(
-                    'Authentication is required',
-                );
-            }
-
             const {
                 _id,
                 email,

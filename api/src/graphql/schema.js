@@ -14,7 +14,6 @@ const typeDefs = gql`
     lastName: String
 	  password:String
     phoneNumber:String
-    # organizationId:Organization
     role: String
 
   }
@@ -25,23 +24,11 @@ const typeDefs = gql`
   }
 
   type Organization {
+    _id: String
     name: String!
     ownerName: String
     email: String
   }
-  
-
-  type Role {
-		_id: String
-		acceptedAt: Int
-		userId: String
-		phoneNumber: String
-		phoneCode: String
-		organizationId: String
-		user: User
-		organization: Organization
-		accessLevel: String!
-	}
 
   input UserInput {
     _id:String
@@ -53,28 +40,17 @@ const typeDefs = gql`
     role: String
   }
   input OrganizationInput {
+    _id: String
     name: String!
     ownerName: String
     email: String
   }
 
-  input RoleInput {
-		_id: String
-		acceptedAt: Int
-		userId: String
-		phoneNumber: String
-		phoneCode: String
-		organizationId: String
-		accessLevel: String!
-	}
   type Query {
     #User
     getCurrentUser(params:UserInput): User
     # getOrg(id: String): Organization
 
-    # ROLE
-		# getOrganizationRoles: [Role]
-		getUserRoles: [Role]
 
   }
   type Mutation {
@@ -85,9 +61,8 @@ const typeDefs = gql`
 
     #ORGANISATION
     createOrg(params: OrganizationInput): Organization
+    updateOrg(params: OrganizationInput!): Organization
 
-    # ROLE
-		createRole(params: RoleInput): Role
   }
 `;
 const resolvers = merge(userResolvers, OrgRsolvers);

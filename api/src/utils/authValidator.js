@@ -5,7 +5,15 @@ export const useAuthValidator = (context) => {
     if (!currentUser) {
         throw new AuthenticationError('Authentication is required');
     }
-    if (!currentUser._id.role === "Admin"||!currentUser._id.role === "SuperAdmin") {
-        throw new AuthenticationError('Authentication is required');
+  
+    if (currentUser._id.role === "User") {
+        throw new AuthenticationError(
+            'Admin or SuperAdmin can access only',
+        );
     }
+    // else if (!currentUser._id.role === "Admin" || !currentUser._id.role === "SuperAdmin") {
+    //     throw new AuthenticationError(
+    //         'Accessed',
+    //     );
+    // }
 }
