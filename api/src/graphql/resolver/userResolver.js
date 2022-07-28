@@ -11,7 +11,7 @@ export const userResolvers = {
     Query: {
         getCurrentUser: async (parent, args, context) => {
             useAuthValidator(context);
-            // const userId = (parent && parent.userId ? parent.userId : currentUser._id).toString();
+            // const userId = (parent && parent.userId ? parent.userId : context.currentUser._id._id);
             const request =
                 args.params
             let response;
@@ -66,7 +66,7 @@ export const userResolvers = {
                 phoneNumber,
                 role,
                 organizationId: context.currentUser._id._id,
-                
+
             };
             let response;
             try {
@@ -80,6 +80,11 @@ export const userResolvers = {
         },
 
         updateUserInfo: async (_parent, args, context) => {
+            // useAuthValidator(context)
+            const { currentUser } = context
+            if (currentUser._id.role !== "User" && currentUser._id.role !== "SuperAdmin") {
+                throw new AuthenticationError('Authentication is required');
+            }
             const {
                 _id,
                 email,

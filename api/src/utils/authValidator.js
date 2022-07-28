@@ -8,11 +8,12 @@ export const useAuthValidator = (context) => {
     }
 
     if (currentUser._id.role === "User") {
-        throw new AuthenticationError(
-            'Admin or SuperAdmin can access only',
-        );
+        throw new AuthenticationError('Admin or SuperAdmin can access only');
     }
-    if (currentUser._id.role !== "Admin" && currentUser._id.role !== "SuperAdmin") {
-        throw new AuthenticationError('Admin can access only',);
+    // if (currentUser._id.role !== "Admin") {
+    //     throw new AuthenticationError('Admin can access only',);
+    // }
+    if (currentUser._id.role !== "SuperAdmin") {
+        throw new AuthenticationError("SuperAdmin can access only")
     }
 }

@@ -50,11 +50,13 @@ export default class OrgController {
             User
         };
         let org;
+
         try {
 
             org = await organisationStore.createOrg(attribute);
             //after creting a orgs linked User is also created here//
-            if (!org) {
+
+            if (org) {
                 const attributes = {
                     email: User.email,
                     password: User.password,

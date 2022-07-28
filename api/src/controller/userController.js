@@ -88,7 +88,7 @@ export default class UserController {
                             lastName,
                             phoneNumber: formattedPhoneNumber,
                             role,
-                            organizationId:organizationId,
+                            organizationId: organizationId,
                             createdAt: Time.now(),
                         };
                         try {

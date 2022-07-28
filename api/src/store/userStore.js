@@ -35,44 +35,44 @@ export default class UserStore {
         }
         return user;
     }
-    async createAdminUserFromStandardUser(userId, attributes) {
-        // try {
-        //     if (attributes.password) {
-        //         attributes.passwordHash = await this.hashPassword(attributes.password);
-        //     }
-        // } catch (e) {
-        //     console.error(e);
-        //     return Promise.reject(new UserStore.OPERATION_UNSUCCESSFUL());
-        // }
-        // delete attributes.password;
+    // async createAdminUserFromStandardUser(userId, attributes) {
+    //     // try {
+    //     //     if (attributes.password) {
+    //     //         attributes.passwordHash = await this.hashPassword(attributes.password);
+    //     //     }
+    //     // } catch (e) {
+    //     //     console.error(e);
+    //     //     return Promise.reject(new UserStore.OPERATION_UNSUCCESSFUL());
+    //     // }
+    //     // delete attributes.password;
 
-        const params = Joi.object().keys({
-            email: Joi.string().required(),
-            password: Joi.any().required(),
-            firstName: Joi.string().optional(),
-            lastName: Joi.string().optional(),
-        }).validate(attributes);
+    //     const params = Joi.object().keys({
+    //         email: Joi.string().required(),
+    //         password: Joi.any().required(),
+    //         firstName: Joi.string().optional(),
+    //         lastName: Joi.string().optional(),
+    //     }).validate(attributes);
 
-        const {
-            email,
-            password,
-            firstName,
-            lastName,
-        } = params.value;
+    //     const {
+    //         email,
+    //         password,
+    //         firstName,
+    //         lastName,
+    //     } = params.value;
 
-        if (params.error) {
-            return Promise.reject(params.error);
-        }
+    //     if (params.error) {
+    //         return Promise.reject(params.error);
+    //     }
 
-        const attribute = {
-            email,
-            password,
-            firstName,
-            lastName,
-        };
-        const resp = this.updateUser(_id, attribute);
-        return resp;
-    }
+    //     const attribute = {
+    //         email,
+    //         password,
+    //         firstName,
+    //         lastName,
+    //     };
+    //     const resp = this.updateUser(_id, attribute);
+    //     return resp;
+    // }
     async updateUser(_id, attributes) {
 
         let user;

@@ -65,6 +65,7 @@ const typeDefs = gql`
     #User
     getCurrentUser(params:UserInput): User
     # getOrg(id: String): Organization
+    # getOrganization(organizationId: String!): Organization
 
 
   }
@@ -78,6 +79,7 @@ const typeDefs = gql`
     #ORGANISATION
     createOrg(params: OrganizationInput): Organization
     updateOrg(params: OrganizationInput!): Organization
+    
 
   }
 `;
