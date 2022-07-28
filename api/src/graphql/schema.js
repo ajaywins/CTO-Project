@@ -15,12 +15,14 @@ const typeDefs = gql`
 	  password:String
     phoneNumber:String
     role: String
+    organizationId: String
 
   }
   type Message{
     message:String
     token:String
     status:String
+    organizationId: String
   }
 
   type Organization {
@@ -28,6 +30,13 @@ const typeDefs = gql`
     name: String!
     ownerName: String
     email: String
+    userId: User
+    firstName: String
+    lastName: String
+    password:String
+    phoneNumber:String
+    role: String
+    User: User
   }
 
   input UserInput {
@@ -44,6 +53,12 @@ const typeDefs = gql`
     name: String!
     ownerName: String
     email: String
+    firstName: String
+    lastName: String
+    password: String
+    phoneNumber: String
+    role: String
+    User: UserInput
   }
 
   type Query {
@@ -58,6 +73,7 @@ const typeDefs = gql`
 	  userLogin(email: String!, password: String!): Message
     createUser(params: UserInput): User
     updateUserInfo(params: UserInput!): User
+    setOrganizationContextId(organizationId: String!): Message
 
     #ORGANISATION
     createOrg(params: OrganizationInput): Organization

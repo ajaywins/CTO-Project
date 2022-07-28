@@ -3,11 +3,19 @@ import { validationError, internalServerError } from "../utils/errorUtil.js"
 import StatusCodes from "../utils/statusCodes.js"
 import OrganisationStore from "../store/organizationStore.js";
 import saveLogs from "../utils/saveLogs.js";
+import UserStore from "../store/userStore.js";
+import UserController from "./userController.js";
+import * as Time from '../utils/Times.js'
 
 const organisationStore = new OrganisationStore();
+const userController = new UserController()
 
 
 export default class OrgController {
+    constructor(controller) {
+        this.controller = controller;
+        this.storage = new UserStore();
+    }
 
     async createOrg(request) {
         let response = {
@@ -18,14 +26,17 @@ export default class OrgController {
             name: Joi.string().required(),
             ownerName: Joi.string().required(),
             email: Joi.string().required(),
+            userId: Joi.string().optional(),
+            User: Joi.object().optional()
         });
         const params = schema.validate(request, { abortEarly: false });
 
         const {
-            userId,
             email,
             name,
             ownerName,
+            userId,
+            User
         } = params.value;
 
         if (params.error) {
@@ -36,18 +47,46 @@ export default class OrgController {
             email,
             name,
             ownerName,
+            userId: userId,
+            User
         };
         let org;
         try {
             org = await organisationStore.createOrg(attribute);
-            console.log("controller", org);
-            return org;
+
+            //after creting a orgs linked user is also created here//
+            if (org) {
+                const attributes = {
+                    email: User.email,
+                    password: User.password,
+                    firstName: User.firstName,
+                    lastName: User.lastName,
+                    phoneNumber: User.phoneNumber,
+                    role: "User",
+                    organizationId: org._id,
+                };
+                try {
+                    let user = await userController.createUser(attributes);
+                } catch (e) {
+                    await saveLogs("UserController::register", e)
+                }
+            } else {
+                let errorMsg = e.message + " exception in creating User"
+                return internalServerError(errorMsg, response)
+            }
         } catch (e) {
-            let errorMsg = e.message + " exception in creating Organization"
-            return internalServerError(errorMsg, response)
+            await saveLogs("UserController::register", e)
         }
+        return org;
+    };
+
+    catch(e) {
+        let errorMsg = e.message + " exception in creating Organization"
+        return internalServerError(errorMsg, response)
     }
+
     async updateOrganization(request) {
+
         let response = {
             status: StatusCodes.UNKNOWN_CODE,
         };

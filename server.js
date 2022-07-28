@@ -22,7 +22,7 @@ app.use(async (req, res, next) => {
   if (tokenString) {
     try {
       let token = tokenString.replace('Bearer ', "");
-      const currentUser = await jwt.verify(token, process.env.SECRET_KEY);
+      const currentUser = jwt.verify(token, process.env.SECRET_KEY);
       if (currentUser) {
         req.currentUser = currentUser;
       }
@@ -39,7 +39,9 @@ const server = new ApolloServer({
   }),
 });
 const PORT = process.env.PORT || 3000
+
 await server.start()
+
 server.applyMiddleware({ app });
 
 app.listen({ port: 4000 }, () =>

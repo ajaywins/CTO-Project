@@ -23,6 +23,17 @@ export default class OrganisationStore {
         }
         return org;
     }
+    async findOrgById(_id) {
+        let org;
+
+        try {
+            org = await orgModel.find({ user: user._id });
+        } catch (e) {
+            console.error(e);
+            return Promise.reject(new orgModel.OPERATION_UNSUCCESSFUL());
+        }
+        return org;
+    }
 
 };
 OrganisationStore.OPERATION_UNSUCCESSFUL = class extends Error {

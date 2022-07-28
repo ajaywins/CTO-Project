@@ -2,6 +2,7 @@ import UserController from "../../controller/userController.js";
 import { ApolloError, AuthenticationError } from 'apollo-server-express';
 import StatusCodes from '../../utils/statusCodes.js';
 import { useAuthValidator } from "../../utils/authValidator.js";
+import orgModel from "../../model/organizationModel.js";
 
 const userController = new UserController();
 
@@ -47,13 +48,15 @@ export const userResolvers = {
         },
         createUser: async (parent, args, context) => {
             useAuthValidator(context);
+
             const {
                 email,
                 firstName,
                 lastName,
                 password,
                 phoneNumber,
-                role
+                role,
+                organizationId
             } = args.params;
             const request = {
                 firstName,
@@ -61,7 +64,9 @@ export const userResolvers = {
                 email,
                 password,
                 phoneNumber,
-                role
+                role,
+                organizationId: context.currentUser._id._id,
+                
             };
             let response;
             try {
@@ -99,8 +104,9 @@ export const userResolvers = {
             }
             return response.user;
         },
-    },
+    }
 };
+
 const help = {
     checkStatus: (response) => {
         if (response.status === StatusCodes.OK) return;

@@ -1,6 +1,7 @@
 import mongoose from "mongoose"
 import shortid from "shortid";
 
+
 export const schema = mongoose.Schema;
 
 const orgSchema = new schema({
@@ -21,6 +22,11 @@ const orgSchema = new schema({
         type: String,
         default: shortid.generate,
     },
+    userId: {
+        type: String,
+        ref: 'userModel',
+        required: false
+    }
 });
 const orgModel = mongoose.model('org', orgSchema);
 export default orgModel;

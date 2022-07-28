@@ -42,17 +42,23 @@ export default class UserController {
             email: Joi.string().required(),
             password: Joi.string().required(),
             phoneNumber: Joi.string().required(),
-            role: Joi.string().required()
+            role: Joi.string().required(),
+            organizationId: Joi.string().required()
         });
         const params = schema.validate(req, { abortEarly: false });
-
+        if (params.error) {
+            const err = " exception in creating User"
+            await saveLogs("UserController::register", err)
+            return Error(err, response)
+        }
         const {
             email,
             firstName,
             lastName,
             password,
             phoneNumber,
-            role
+            role,
+            organizationId
         } = params.value;
 
         const formattedPhoneNumber = formatPhoneNumber(phoneNumber);
@@ -82,6 +88,7 @@ export default class UserController {
                             lastName,
                             phoneNumber: formattedPhoneNumber,
                             role,
+                            organizationId:organizationId,
                             createdAt: Time.now(),
                         };
                         try {
@@ -107,7 +114,6 @@ export default class UserController {
             }
         }
         return user;
-
     }
 
     async userLogin(req, res) {
@@ -214,7 +220,7 @@ export default class UserController {
         }).validate(request);
 
         if (params.error) {
-            return validationError(params.error, response);
+            return Error(params.error, response);
         }
         const {
             _id
@@ -229,7 +235,7 @@ export default class UserController {
 
         if (!user) {
             const errorMsg = ('userNotFound', {
-                userId
+                _id
             });
             return Error(errorMsg, response);
         }
@@ -240,8 +246,4 @@ export default class UserController {
         };
         return response;
     }
-
-
-
-
 }

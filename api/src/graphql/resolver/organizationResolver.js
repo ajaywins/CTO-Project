@@ -1,6 +1,6 @@
 import OrgController from "../../controller/organizationController.js";
 import StatusCodes from "../../utils/statusCodes.js";
-// import { ApolloError, AuthenticationError } from "apollo-server-express";
+import { ApolloError } from "apollo-server-express";
 import { useAuthValidator } from '../../utils/authValidator.js';
 
 const orgController = new OrgController();
@@ -21,17 +21,21 @@ export const OrgRsolvers = {
         createOrg: async (parent, args, context) => {
             useAuthValidator(context);
 
-
             const {
+                userId,
                 email,
                 ownerName,
                 name,
+                User
+
             } = args.params;
 
             const request = {
                 email,
                 ownerName,
                 name,
+                userId: context.currentUser._id._id,
+                User
             };
             let response;
             try {
@@ -51,6 +55,7 @@ export const OrgRsolvers = {
                 email,
                 ownerName,
                 name,
+
             } = args.params;
 
             const request = {
@@ -58,6 +63,7 @@ export const OrgRsolvers = {
                 email,
                 ownerName,
                 name,
+
             };
             let response;
             try {
@@ -78,7 +84,7 @@ const help = {
         if (response.status === StatusCodes.NOT_FOUND) return;
 
         // throw new ApolloError(
-        //     response.error.message,
+        //     // response.error.message,
         //     response.status.toString(),
         // );
     },
