@@ -2,7 +2,7 @@ import UserController from "../../controller/userController.js";
 import { ApolloError, AuthenticationError } from 'apollo-server-express';
 import StatusCodes from '../../utils/statusCodes.js';
 import { useAuthValidator } from "../../utils/authValidator.js";
-import orgModel from "../../model/organizationModel.js";
+
 
 const userController = new UserController();
 

@@ -5,7 +5,6 @@ import OrganisationStore from "../store/organizationStore.js";
 import saveLogs from "../utils/saveLogs.js";
 import UserStore from "../store/userStore.js";
 import UserController from "./userController.js";
-import * as Time from '../utils/Times.js'
 
 const organisationStore = new OrganisationStore();
 const userController = new UserController()
@@ -52,10 +51,10 @@ export default class OrgController {
         };
         let org;
         try {
-            org = await organisationStore.createOrg(attribute);
 
-            //after creting a orgs linked user is also created here//
-            if (org) {
+            org = await organisationStore.createOrg(attribute);
+            //after creting a orgs linked User is also created here//
+            if (!org) {
                 const attributes = {
                     email: User.email,
                     password: User.password,
