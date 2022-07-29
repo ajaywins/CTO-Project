@@ -6,7 +6,6 @@ export const useAuthValidator = (context) => {
     if (!currentUser) {
         throw new AuthenticationError('Authentication is required');
     }
-
     if (currentUser._id.role === "User") {
         throw new AuthenticationError('Admin or SuperAdmin can access only');
     }

@@ -11,7 +11,6 @@ export const userResolvers = {
     Query: {
         getCurrentUser: async (parent, args, context) => {
             useAuthValidator(context);
-            // const userId = (parent && parent.userId ? parent.userId : context.currentUser._id._id);
             const request =
                 args.params
             let response;
@@ -21,7 +20,6 @@ export const userResolvers = {
             } catch (e) {
                 help.catchThrow(e);
             }
-
             return response.user;
         },
     },
@@ -31,7 +29,6 @@ export const userResolvers = {
                 email,
                 password
             } = args
-
             const request = {
                 email,
                 password
@@ -48,7 +45,6 @@ export const userResolvers = {
         },
         createUser: async (parent, args, context) => {
             useAuthValidator(context);
-
             const {
                 email,
                 firstName,
@@ -66,7 +62,6 @@ export const userResolvers = {
                 phoneNumber,
                 role,
                 organizationId: context.currentUser._id._id,
-
             };
             let response;
             try {
@@ -78,7 +73,6 @@ export const userResolvers = {
             }
             return response;
         },
-
         updateUserInfo: async (_parent, args, context) => {
             // useAuthValidator(context)
             const { currentUser } = context
@@ -92,7 +86,6 @@ export const userResolvers = {
                 lastName,
                 phoneNumber,
             } = args.params;
-
             const request = {
                 _id,
                 email,
@@ -111,7 +104,7 @@ export const userResolvers = {
         },
     }
 };
-
+// TODO:you can move this Object to separate file(s)
 const help = {
     checkStatus: (response) => {
         if (response.status === StatusCodes.OK) return;

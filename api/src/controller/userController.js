@@ -19,7 +19,7 @@ export default class UserController {
             super('An error occured while processing the request.');
         }
     };
-
+    //generate token...
     generateJWT(userId, organizationId) {
         return jwt.sign({
             _id: userId,
@@ -31,7 +31,7 @@ export default class UserController {
             { expiresIn: '2h' }
         );
     }
-
+    //create any user...
     async createUser(req, res) {
         let response = {
             status: StatusCodes.UNKNOWN_CODE,
@@ -95,6 +95,7 @@ export default class UserController {
                             user = await this.storage.createUser(attributes);
                         } catch (e) {
                             await saveLogs("UserController::register", e)
+                            return Error(e, response);
                         }
                     } else {
                         const err = 'user with same number already exist'
@@ -115,11 +116,10 @@ export default class UserController {
         }
         return user;
     }
-
+    //login user...
     async userLogin(req, res) {
         try {
             const { email, password } = req;
-
             if (email && password) {
                 const user = await this.storage.loginUser(email);
                 if (user != null) {
@@ -162,6 +162,7 @@ export default class UserController {
             return response;
         }
     };
+    //update user..
     async updateUserInfo(request) {
         let response = {
             status: StatusCodes.UNKNOWN_CODE,
@@ -174,13 +175,10 @@ export default class UserController {
             phoneNumber: Joi.string().optional(),
             phoneCode: Joi.string().optional(),
         }).validate(request);
-
-
         if (params.error) {
             console.error('updateUserInfo - validation error');
             return Error(params.error, response);
         }
-
         const {
             _id,
             email,
@@ -188,29 +186,25 @@ export default class UserController {
             lastName,
             phoneNumber
         } = params.value;
-
         const attributes = {
             email,
             firstName,
             lastName,
             phoneNumber,
-
         };
-
         let user;
         try {
             user = await this.storage.updateUser(_id, attributes);
         } catch (e) {
             return Error(e, response);
         }
-
         response = {
             status: StatusCodes.OK,
             user,
         };
-
         return response;
     }
+    //get user...
     async get(request) {
         let response = {
             status: StatusCodes.UNKNOWN_CODE,
@@ -232,7 +226,6 @@ export default class UserController {
         } catch (e) {
             return Error(e, response);
         }
-
         if (!user) {
             const errorMsg = ('userNotFound', {
                 _id

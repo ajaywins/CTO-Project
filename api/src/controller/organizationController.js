@@ -15,7 +15,7 @@ export default class OrgController {
         this.controller = controller;
         this.storage = new UserStore();
     }
-
+    //creating Organization..
     async createOrg(request) {
         let response = {
             status: StatusCodes.UNKNOWN_CODE,
@@ -37,10 +37,44 @@ export default class OrgController {
             userId,
             User
         } = params.value;
-
         if (params.error) {
-
             return validationError(params.error, response)
+        }
+        //Make sure that there isn't an existing account
+        //checking Owner's existing email
+        let formattedEmail;
+        if (email) {
+            // lowercase email
+            formattedEmail = email.toLowerCase();
+            try {
+                let existingOwnerEmail = await organisationStore.findOrgByEmail(formattedEmail);
+                if (existingOwnerEmail) {
+                    const err = 'owner with same email already exists'
+                    await saveLogs("UserController::register", err)
+                    return Error(err, response)
+
+                }
+            } catch (e) {
+                await saveLogs("UserController::register", e)
+                return Error(e, response);
+            }
+        }
+        //Make sure that there isn't an existing account
+        //checking user's existing email
+        let userEmail = User.email;
+        if (userEmail) {
+            try {
+                let existingEmail = await this.storage.findUserByEmail(userEmail);
+                if (existingEmail) {
+                    const err = 'user with same email already exists'
+                    await saveLogs("UserController::register", err)
+                    return Error(err, response)
+
+                }
+            } catch (e) {
+                await saveLogs("UserController::register", e)
+                return Error(e, response);
+            }
         }
         const attribute = {
             email,
@@ -50,13 +84,12 @@ export default class OrgController {
             User
         };
         let org;
-
         try {
-
             org = await organisationStore.createOrg(attribute);
-            //after creting a orgs linked User is also created here//
 
+            //after creting a orgs linked User is also created here..
             if (org) {
+
                 const attributes = {
                     email: User.email,
                     password: User.password,
@@ -79,13 +112,8 @@ export default class OrgController {
             await saveLogs("UserController::register", e)
         }
         return org;
-    };
-
-    catch(e) {
-        let errorMsg = e.message + " exception in creating Organization"
-        return internalServerError(errorMsg, response)
     }
-
+    //update organization...
     async updateOrganization(request) {
 
         let response = {

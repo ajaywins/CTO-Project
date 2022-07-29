@@ -34,6 +34,16 @@ export default class OrganisationStore {
         }
         return org;
     }
+    async findOrgByEmail(email) {
+        let org;
+        try {
+            org = await orgModel.findOne({ email });
+        } catch (e) {
+            console.error(e);
+            return Promise.reject(new UserStore.OPERATION_UNSUCCESSFUL());
+        }
+        return org;
+    }
 
 };
 OrganisationStore.OPERATION_UNSUCCESSFUL = class extends Error {

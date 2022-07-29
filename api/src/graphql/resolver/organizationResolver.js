@@ -18,6 +18,7 @@ export const OrgRsolvers = {
         // },
     },
     Mutation: {
+        //create organization...
         createOrg: async (parent, args, context) => {
             useAuthValidator(context);
 
@@ -47,7 +48,7 @@ export const OrgRsolvers = {
             }
             return response
         },
-
+        //update organization...
         updateOrg: async (parent, args, context) => {
             useAuthValidator(context);
             const {

@@ -14,7 +14,6 @@ const userSchema = new schema({
     type: String,
     required: false,
   },
-
   email: {
     type: String,
     required: false,
