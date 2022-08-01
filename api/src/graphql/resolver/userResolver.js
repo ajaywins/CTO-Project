@@ -22,8 +22,27 @@ export const userResolvers = {
             }
             return response.user;
         },
+        //get users organizations...
+        async getUsersWithOrganization(parent, args, context) {
+            useAuthValidator(context);
+
+            let organizationId = context.currentUser._id.organizationId;
+            const request = {
+
+                organizationId
+            }
+            let response;
+            try {
+                response = await userController.getUserOrganization(request);
+                help.checkStatus(response)
+            } catch (e) {
+                help.catchThrow(e)
+            }
+            return response.users;
+        }
     },
     Mutation: {
+        //login user...
         userLogin: async (parent, args, context) => {
             const {
                 email,
@@ -43,6 +62,7 @@ export const userResolvers = {
                 help.catchThrow(err);
             }
         },
+        //create user...
         createUser: async (parent, args, context) => {
             useAuthValidator(context);
             const {
@@ -73,6 +93,7 @@ export const userResolvers = {
             }
             return response;
         },
+        //update user...
         updateUserInfo: async (_parent, args, context) => {
             // useAuthValidator(context)
             const { currentUser } = context

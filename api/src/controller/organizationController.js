@@ -60,7 +60,7 @@ export default class OrgController {
             }
         }
         //Make sure that there isn't an existing account
-        //checking user's existing email
+        //checking user's existing email...
         let userEmail = User.email;
         if (userEmail) {
             try {
@@ -75,43 +75,59 @@ export default class OrgController {
                 await saveLogs("UserController::register", e)
                 return Error(e, response);
             }
-        }
-        const attribute = {
-            email,
-            name,
-            ownerName,
-            userId: userId,
-            User
-        };
-        let org;
-        try {
-            org = await organisationStore.createOrg(attribute);
-
-            //after creting a orgs linked User is also created here..
-            if (org) {
-
-                const attributes = {
-                    email: User.email,
-                    password: User.password,
-                    firstName: User.firstName,
-                    lastName: User.lastName,
-                    phoneNumber: User.phoneNumber,
-                    role: "User",
-                    organizationId: org._id,
-                };
+            //checking user's existing email...
+            let phoneNumber = User.phoneNumber
+            if (phoneNumber) {
                 try {
-                    let user = await userController.createUser(attributes);
+                    let existingNumber = await this.storage.findUserByPhoneNumber(phoneNumber);
+                    if (existingNumber) {
+                        const err = 'user with same number already exists'
+                        await saveLogs("UserController::register", err)
+                        return Error(err, response)
+
+                    }
                 } catch (e) {
                     await saveLogs("UserController::register", e)
+                    return Error(e, response);
                 }
-            } else {
-                let errorMsg = e.message + " exception in creating User"
-                return internalServerError(errorMsg, response)
             }
-        } catch (e) {
-            await saveLogs("UserController::register", e)
+            const attribute = {
+                email,
+                name,
+                ownerName,
+                userId: userId,
+                User
+            };
+            let org;
+            try {
+                org = await organisationStore.createOrg(attribute);
+
+                //after creting a orgs linked User is also created here..
+                if (org) {
+
+                    const attributes = {
+                        email: User.email,
+                        password: User.password,
+                        firstName: User.firstName,
+                        lastName: User.lastName,
+                        phoneNumber: User.phoneNumber,
+                        role: "User",
+                        organizationId: org._id,
+                    };
+                    try {
+                        let user = await userController.createUser(attributes);
+                    } catch (e) {
+                        await saveLogs("UserController::register", e)
+                    }
+                } else {
+                    let errorMsg = e.message + " exception in creating User"
+                    return internalServerError(errorMsg, response)
+                }
+            } catch (e) {
+                await saveLogs("UserController::register", e)
+            }
+            return org;
         }
-        return org;
     }
     //update organization...
     async updateOrganization(request) {
@@ -158,5 +174,36 @@ export default class OrgController {
         };
 
         return response.org;
+    }
+    async getOrganizationList(request) {
+        let response = {
+            status: StatusCodes.UNKNOWN_CODE,
+        };
+
+        const params = Joi.object().keys({
+            userId: Joi.string().optional(),
+        }).validate(request);
+
+        if (params.error) {
+            return Error(params.error, response);
+        }
+        const {
+            userId
+        } = params.value;
+        let req = {
+            userId: userId
+        }
+
+        let org;
+        try {
+            org = await organisationStore.getOrganizationList(req);
+        } catch (e) {
+            return Error(e, response);
+        }
+        response = {
+            status: StatusCodes.OK,
+            org,
+        };
+        return org;
     }
 }

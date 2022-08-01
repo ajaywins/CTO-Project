@@ -70,6 +70,16 @@ export default class UserStore {
 
         return user;
     }
+    async findUserOrganization({ organizationId }) {
+        let user;
+        try {
+            user = await userModel.find({ organizationId: organizationId, role: { $ne: "SuperAdmin" } }).exec();
+        } catch (e) {
+            console.error(e);
+            return Promise.reject(new UserStore.OPERATION_UNSUCCESSFUL());
+        }
+        return user;
+    }
 };
 
 UserStore.OPERATION_UNSUCCESSFUL = class extends Error {

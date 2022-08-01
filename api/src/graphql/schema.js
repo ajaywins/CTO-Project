@@ -30,13 +30,13 @@ const typeDefs = gql`
     name: String!
     ownerName: String
     email: String
-    userId: User
+    userId: String
     firstName: String
     lastName: String
     password:String
     phoneNumber:String
     role: String
-    User: User
+    user: User
   }
 
   input UserInput {
@@ -58,13 +58,17 @@ const typeDefs = gql`
     password: String
     phoneNumber: String
     role: String
+    userId: String
     User: UserInput
   }
 
   type Query {
     #User
-    getCurrentUser(params:UserInput): User
-    # getOrg(id: String): Organization
+    getCurrentUser(params: UserInput): User
+    getUsersWithOrganization: [ User ]
+    
+    #Organization
+    getOrganizationList:[Organization]
     # getOrganization(organizationId: String!): Organization
 
 
@@ -73,12 +77,12 @@ const typeDefs = gql`
     # USER
 	  userLogin(email: String!, password: String!): Message
     createUser(params: UserInput): User
-    updateUserInfo(params: UserInput!): User
-    setOrganizationContextId(organizationId: String!): Message
+    updateUserInfo(params: UserInput): User
+   
 
     #ORGANISATION
     createOrg(params: OrganizationInput): Organization
-    updateOrg(params: OrganizationInput!): Organization
+    updateOrg(params: OrganizationInput): Organization
     
 
   }

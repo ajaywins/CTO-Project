@@ -239,4 +239,37 @@ export default class UserController {
         };
         return response;
     }
+    async getUserOrganization(request) {
+        let response = {
+            status: StatusCodes.UNKNOWN_CODE,
+        };
+
+        const params = Joi.object().keys({
+            organizationId: Joi.string().optional(),
+        }).validate(request);
+
+        if (params.error) {
+            return Error(params.error, response);
+        }
+        const {
+            organizationId
+        } = params.value;
+        let req = {
+            organizationId:organizationId
+        }
+
+        let users;
+        try {
+            users = await this.storage.findUserOrganization(req);
+        } catch (e) {
+            return Error(e, response);
+        }
+
+        response = {
+            status: StatusCodes.OK,
+            users,
+        };
+
+        return response;
+    }
 }

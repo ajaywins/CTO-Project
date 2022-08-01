@@ -7,15 +7,22 @@ const orgController = new OrgController();
 
 export const OrgRsolvers = {
     Query: {
-        // getOrg: async (parent, args, context) => {
-        //     try {
-        //         response = await OrgController.org.get(request);
-        //         return response;
-        //     } catch (e) {
-        //         console.log(e);
-        //     }
-        //     return response.user;
-        // },
+        // get list of organization...
+        getOrganizationList: async (parent, args, context) => {
+            useAuthValidator(context);
+
+            const request = {
+                userId: context.currentUser._id._id
+            }
+            let response;
+            try {
+                response = await orgController.getOrganizationList(request);
+                help.checkStatus(response)
+            } catch (e) {
+                help.catchThrow(e)
+            }
+            return response;
+        }
     },
     Mutation: {
         //create organization...
@@ -76,7 +83,8 @@ export const OrgRsolvers = {
             }
             return response
         }
-    }
+    },
+
 };
 const help = {
     checkStatus: (response) => {
