@@ -24,8 +24,7 @@ export const userResolvers = {
         },
         //get users organizations...
         async getUsersWithOrganization(parent, args, context) {
-            useAuthValidator(context);
-
+            // useAuthValidator(context);
             let organizationId = context.currentUser._id.organizationId;
             const request = {
 
@@ -38,7 +37,7 @@ export const userResolvers = {
             } catch (e) {
                 help.catchThrow(e)
             }
-            return response.users;
+            return response;
         }
     },
     Mutation: {

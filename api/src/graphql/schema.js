@@ -16,6 +16,7 @@ const typeDefs = gql`
     phoneNumber:String
     role: String
     organizationId: String
+    organization:Organization
 
   }
   type Message{

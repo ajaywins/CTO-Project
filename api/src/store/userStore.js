@@ -1,13 +1,22 @@
-import userModel from "../model/userModel.js";
-import Joi from 'jsonwebtoken'
+import userMongo from "../model/userModel.js";
+import pkg from 'mongoose';
+const { Schema, model } = pkg;
+export const userSchema = new Schema(userMongo);
+export const UserMongo = model('users', userSchema);
 
+userSchema.virtual('organization', {
+    ref: 'org',
+    localField: 'organizationId',
+    foreignField: '_id',
+    justOne: true,
+});
 
 export default class UserStore {
 
     async createUser(User) {
         let user;
         try {
-            user = await userModel(User).save();
+            user = await userMongo(User).save();
         } catch (e) {
             console.error(e);
             return Promise.reject(new UserStore.OPERATION_UNSUCCESSFUL());
@@ -17,7 +26,7 @@ export default class UserStore {
     async loginUser(email) {
         let user;
         try {
-            user = await userModel.findOne({ email })
+            user = await UserMongo.findOne({ email })
         }
         catch (e) {
             console.error(e);
@@ -28,7 +37,7 @@ export default class UserStore {
     async findUserByEmail(email) {
         let user;
         try {
-            user = await userModel.findOne({ email });
+            user = await UserMongo.findOne({ email });
         } catch (e) {
             console.error(e);
             return Promise.reject(new UserStore.OPERATION_UNSUCCESSFUL());
@@ -39,7 +48,7 @@ export default class UserStore {
 
         let user;
         try {
-            user = await userModel.findByIdAndUpdate(_id, attributes, { new: true });
+            user = await UserMongo.findByIdAndUpdate(_id, attributes, { new: true });
         } catch (e) {
             console.error(e);
             return Promise.reject(new UserStore.OPERATION_UNSUCCESSFUL());
@@ -51,7 +60,7 @@ export default class UserStore {
         let user;
 
         try {
-            user = await userModel.findById({ _id });
+            user = await UserMongo.findById({ _id });
         } catch (e) {
             console.error(e);
             return Promise.reject(new UserStore.OPERATION_UNSUCCESSFUL());
@@ -62,7 +71,7 @@ export default class UserStore {
         let user;
 
         try {
-            user = await userModel.findOne({ phoneNumber });
+            user = await UserMongo.findOne({ phoneNumber });
         } catch (e) {
             console.error(e);
             return Promise.reject(new UserStore.OPERATION_UNSUCCESSFUL());
@@ -73,7 +82,7 @@ export default class UserStore {
     async findUserOrganization({ organizationId }) {
         let user;
         try {
-            user = await userModel.find({ organizationId: organizationId, role: { $ne: "SuperAdmin" } }).exec();
+            user = await UserMongo.find({ organizationId, role: { $ne: "SuperAdmin" } }).populate('organization').exec();
         } catch (e) {
             console.error(e);
             return Promise.reject(new UserStore.OPERATION_UNSUCCESSFUL());

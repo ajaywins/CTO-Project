@@ -7,8 +7,8 @@ export const Organization = model('org', OrganizationSchema);
 
 OrganizationSchema.virtual('user', {
     ref: 'user',
-    localField: 'userId',
-    foreignField: '_id',
+    localField: '_id',
+    foreignField: 'organizationId',
     justOne: true,
 });
 

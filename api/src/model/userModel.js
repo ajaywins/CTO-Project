@@ -1,10 +1,8 @@
-import mongoose from "mongoose"
+
 import shortid from "shortid";
 import AccessLevels from '../utils/accessLevel.js'
 
-export const schema = mongoose.Schema;
-
-const userSchema = new schema({
+export default ({
 
   firstName: {
     type: String,
@@ -40,5 +38,4 @@ const userSchema = new schema({
     required: false
   },
 })
-const userModel = mongoose.model('user', userSchema);
-export default userModel;
+

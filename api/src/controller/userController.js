@@ -270,6 +270,6 @@ export default class UserController {
             users,
         };
 
-        return response;
+        return users;
     }
 }
